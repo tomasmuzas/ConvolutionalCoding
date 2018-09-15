@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ConvolutionalCodes.Entities;
+using System.Linq;
 
 namespace ConvolutionalCodes.Encoders
 {
@@ -9,8 +10,9 @@ namespace ConvolutionalCodes.Encoders
 
         private IGeneratingPolynomial _polynomial{ get; set; }
 
-        public ShiftingRegister(IGeneratingPolynomial polynomial, int slotCount)
+        public ShiftingRegister(IGeneratingPolynomial polynomial)
         {
+            int slotCount = polynomial.Coeficients.Count();
             _bits = new Queue<Bit>(slotCount);
             for (int i = 0; i < slotCount; i++)
             {
