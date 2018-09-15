@@ -11,7 +11,6 @@ namespace ConvolutionalCodes.UnitTests
         private bool CollectionsAreEqual<T>(IEnumerable<T> collection1, IEnumerable<T> collection2)
         {
             return collection1
-                .AsQueryable()
                 .SequenceEqual(collection2);
         }
 
@@ -27,7 +26,9 @@ namespace ConvolutionalCodes.UnitTests
 
             IBitStream bitStream = new BitStream(testData);
 
-            Assert.True(CollectionsAreEqual(testData, bitStream.ReadAllBits()));
+            var result = bitStream.ReadAllBits();
+
+            Assert.True(CollectionsAreEqual(testData, result));
         }
 
         [Theory]
