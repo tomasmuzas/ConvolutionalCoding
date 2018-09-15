@@ -12,6 +12,8 @@
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -52,7 +54,10 @@
     <Compile Include="Entities\Bit.cs" />
     <Compile Include="Entities\BitStream.cs" />
     <Compile Include="Entities\IBitStream.cs" />
+    <Compile Include="Entities\ICommunicationChannel.cs" />
+    <Compile Include="Entities\NoisyChannel.cs" />
     <Compile Include="Utilities\IConverter.cs" />
+    <Compile Include="Utilities\TextConverter.cs" />
     <Compile Include="Views\Application.cs">
       <SubType>Form</SubType>
     </Compile>
