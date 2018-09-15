@@ -23,7 +23,27 @@ namespace ConvolutionalCodes.Encoders
 
         public IEnumerable<Bit> Shift(Bit nextBit)
         {
-            throw new System.NotImplementedException();
+            _bits.Dequeue();
+            _bits.Enqueue(nextBit);
+            int position = 0;
+
+            var resultBits = new List<Bit>();
+            resultBits.Add(nextBit);
+
+            Bit secondBit = new Bit(0);
+
+            foreach (var coeficient in _polynomial.Coeficients)
+            {
+                if (coeficient == 1)
+                {
+                    secondBit = secondBit ^ _bits.ElementAt(position); 
+                }
+                position++;
+            }
+
+            resultBits.Add(secondBit);
+
+            return resultBits;
         }
     }
 }
