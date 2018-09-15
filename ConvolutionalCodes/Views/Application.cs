@@ -1,4 +1,5 @@
 ﻿using ConvolutionalCodes.Entities;
+using ConvolutionalCodes.Utilities;
 using System;
 using System.Text;
 using System.Windows.Forms;
@@ -10,16 +11,19 @@ namespace ConvolutionalCodes
         public Application()
         {
             InitializeComponent();
-            IBitStream bitsStream = new BitStream(Encoding.UTF8.GetBytes("YZa"));
-            int count = 0;
-            foreach (var bit in bitsStream.ReadAllBits())
-            {
-                if (count++ % 8 == 0)
-                {
-                    Console.Write(" ");
-                }
-                Console.Write(bit);
-            }
+            
+            IConverter<string> converter = new TextConverter(Encoding.UTF8);
+
+            IBitStream initialBits = converter.ToBitStream("abcXYZ");
+            var initialText = converter.FromBitStream(initialBits);
+
+            ICommunicationChannel channel = new NoisyChannel(errorChance: 0.1);
+
+            IBitStream bitsAfterTransmission = channel.Transmit(initialBits);
+            var textAfterTransmission = converter.FromBitStream(bitsAfterTransmission);
+
+            Console.WriteLine(initialText);
+            Console.WriteLine(textAfterTransmission);
         }
     }
 }

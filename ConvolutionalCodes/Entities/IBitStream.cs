@@ -7,5 +7,7 @@ namespace ConvolutionalCodes.Entities
         IEnumerable<Bit> ReadBits(int length);
 
         IEnumerable<Bit> ReadAllBits();
+
+        byte[] ToByteArray();
     }
 }
