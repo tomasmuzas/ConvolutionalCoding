@@ -14,18 +14,16 @@ namespace ConvolutionalCodes.UnitTests
                 .SequenceEqual(collection2);
         }
 
-        [Fact]
-        public void BitStream_Copies_IEnumerable_Of_Bits_Correctly()
+        [Theory]
+        [InlineData(new bool[] { true, false, false, true, true, false })]
+        [InlineData(new bool[] { true, false, false, true, true, false, true, true })]
+        [InlineData(new bool[] { true, false, false, true, true, false, true, true, true, false, false, true, true, false, true, true })]
+        [InlineData(new bool[] { })]
+        public void BitStream_Copies_IEnumerable_Of_Bits_Correctly(IEnumerable<bool> bits)
         {
-            var testData = new List<Bit>
-            {
-                new Bit(1),
-                new Bit(0),
-                new Bit(0),
-                new Bit(1),
-                new Bit(1),
-                new Bit(0)
-            };
+            var testData = bits
+                .AsQueryable()
+                .Select(b => new Bit(b));
 
             IBitStream bitStream = new BitStream(testData);
 
