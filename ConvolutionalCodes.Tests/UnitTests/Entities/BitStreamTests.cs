@@ -2,6 +2,7 @@ using Xunit;
 using System.Collections.Generic;
 using ConvolutionalCodes.Entities;
 using System.Linq;
+using System;
 
 namespace ConvolutionalCodes.UnitTests
 {
@@ -22,12 +23,34 @@ namespace ConvolutionalCodes.UnitTests
         public void BitStream_Copies_IEnumerable_Of_Bits_Correctly(IEnumerable<bool> bits)
         {
             var testData = bits
-                .AsQueryable()
                 .Select(b => new Bit(b));
 
             IBitStream bitStream = new BitStream(testData);
 
             Assert.True(CollectionsAreEqual(testData, bitStream.ReadAllBits()));
+        }
+
+        [Theory]
+        [InlineData(
+            new byte[] { 0b01110101 },
+            new bool[] { false, true, true, true, false, true, false, true})]
+        [InlineData(
+            new byte[] { 0b11110101, 0b00101011 },
+            new bool[] { true, true, true, true, false, true, false, true, false, false, true, false, true, false, true, true })]
+        [InlineData(
+            new byte[] { },
+            new bool[] { })]
+        public void BitStream_Copies_IEnumerable_Of_Bytes_Correctly(
+            IEnumerable<byte> bytes,
+            IEnumerable<bool> bools)
+        {
+            var testData = bools.Select(b => new Bit(b));
+
+            IBitStream bitStream = new BitStream(bytes);
+
+            var result = bitStream.ReadAllBits();
+
+            Assert.True(CollectionsAreEqual(testData, result));
         }
     }
 }
