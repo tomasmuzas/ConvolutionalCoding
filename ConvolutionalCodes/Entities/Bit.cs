@@ -1,10 +1,15 @@
-﻿namespace ConvolutionalCodes.Entities
+namespace ConvolutionalCodes.Entities
 {
     public struct Bit
     {
         private bool _value;
 
         public Bit(byte value)
+        {
+            _value = (value & 0x1) == 1;
+        }
+
+        public Bit(int value)
         {
             _value = (value & 0x1) == 1;
         }
