@@ -27,14 +27,31 @@ namespace ConvolutionalCodes.Encoders
             foreach (var bit in stream.ReadAllBits())
             {
                 IEnumerable<Bit> newBits = _register.Shift(bit);
-                foreach (var generator in parityBitGenerators)
-                {
-                    var parityBit = generator.GeneratorFunction.Invoke(newBits);
-                    encodedStream.Add(parityBit);
-                }
+                var parityBits = GenerateParityBits(newBits);
+                encodedStream.AddRange(parityBits);
+            }
+
+            // Encode additional 6 bits to clear register state
+            for (int i = 0; i < 6; i++)
+            {
+                IEnumerable<Bit> newBits = _register.Shift(new Bit(0));
+                var parityBits = GenerateParityBits(newBits);
+                encodedStream.AddRange(parityBits);
             }
 
             return new BitStream(encodedStream);
+        }
+
+        private IEnumerable<Bit> GenerateParityBits(IEnumerable<Bit> bits)
+        {
+            var parityBits = new List<Bit>();
+            foreach (var generator in parityBitGenerators)
+            {
+                var nextParityBit = generator.GeneratorFunction.Invoke(bits);
+                parityBits.Add(nextParityBit);
+            }
+
+            return parityBits;
         }
     }
 }
