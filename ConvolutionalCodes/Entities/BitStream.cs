@@ -34,7 +34,7 @@ namespace ConvolutionalCodes.Entities
             {
                 for (int i = 0; i <= 7; i++)
                 {
-                    var bit = new Bit(b >> i);
+                    var bit = new Bit(b >> (7 - i));
                     _data.Add(bit); 
                 }
             }
