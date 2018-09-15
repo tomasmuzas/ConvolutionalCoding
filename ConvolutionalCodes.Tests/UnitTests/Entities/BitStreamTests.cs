@@ -53,5 +53,31 @@ namespace ConvolutionalCodes.UnitTests
 
             Assert.True(CollectionsAreEqual(testData, result));
         }
+        
+        [Theory]
+        // Amount of bits is divisible by 8
+        [InlineData(
+    new byte[] { 0b11110101, 0b00101011 },
+    new bool[] { true, true, true, true, false, true, false, true, false, false, true, false, true, false, true, true })]
+        // Amount of bits is not divisible by 8
+        [InlineData(
+    new byte[] { 0b11110101, 0b00101010 },
+    new bool[] { true, true, true, true, false, true, false, true, false, false, true, false, true, false, true })]
+        // No bits
+        [InlineData(
+    new byte[] { },
+    new bool[] { })]
+        public void BitStream_ToByteArray_Success(
+    IEnumerable<byte> bytes,
+    IEnumerable<bool> bools)
+        {
+            var testData = bools.Select(b => new Bit(b));
+
+            IBitStream bitStream = new BitStream(bytes);
+
+            var result = bitStream.ToByteArray();
+
+            Assert.True(CollectionsAreEqual(bytes, result));
+        }
     }
 }
