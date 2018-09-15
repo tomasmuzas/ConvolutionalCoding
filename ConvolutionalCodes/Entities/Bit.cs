@@ -1,4 +1,4 @@
-namespace ConvolutionalCodes.Entities
+﻿namespace ConvolutionalCodes.Entities
 {
     public struct Bit
     {
