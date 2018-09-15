@@ -23,6 +23,16 @@ namespace ConvolutionalCodes.Entities
         {
             return new Bit(value);
         }
+        public static bool operator ==(Bit bit1, Bit bit2)
+        {
+            return bit1._value == bit2._value;
+        }
+
+        public static bool operator !=(Bit bit1, Bit bit2)
+        {
+            return bit1._value != bit2._value;
+        }
+
         public static Bit operator & (Bit bit1, Bit bit2)
         {
             return bit1._value & bit2._value;
