@@ -38,6 +38,11 @@ namespace ConvolutionalCodes.Entities
             return bit1._value ^ bit2._value;
         }
 
+        public static Bit operator ! (Bit bit)
+        {
+            return !bit._value;
+        }
+
         public override string ToString()
         {
             return _value ? "1" : "0";
