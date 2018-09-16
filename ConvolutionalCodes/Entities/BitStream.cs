@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace ConvolutionalCodes.Entities
 {
@@ -50,6 +51,16 @@ namespace ConvolutionalCodes.Entities
             }
 
             _position = _data.Count - 1;
+        }
+
+        public static bool operator ==(BitStream stream1, BitStream stream2)
+        {
+            return stream1._data.SequenceEqual(stream2._data);
+        }
+
+        public static bool operator !=(BitStream stream1, BitStream stream2)
+        {
+            return !(stream1 == stream2);
         }
 
         /// <summary>
