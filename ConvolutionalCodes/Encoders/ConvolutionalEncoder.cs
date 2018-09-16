@@ -1,4 +1,3 @@
-﻿using System;
 using System.Collections.Generic;
 using ConvolutionalCodes.Entities;
 
@@ -31,7 +30,7 @@ namespace ConvolutionalCodes.Encoders
                 encodedStream.AddRange(parityBits);
             }
 
-            // Encode additional 6 bits to clear register state
+            // Encode additional 6 bits to reset register state
             for (int i = 0; i < 6; i++)
             {
                 IEnumerable<Bit> newBits = _register.Shift(new Bit(0));
