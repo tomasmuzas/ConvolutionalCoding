@@ -52,11 +52,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Encoders\ConvolutionalEncoder.cs" />
-    <Compile Include="Encoders\CustomParityBitGenerator.cs" />
     <Compile Include="Encoders\IEncoder.cs" />
-    <Compile Include="Encoders\ParityBitGenerator.cs" />
     <Compile Include="Encoders\IRegister.cs" />
-    <Compile Include="Encoders\PolynomialParityBitGenerator.cs" />
+    <Compile Include="Encoders\ParityBitGenerators.cs" />
     <Compile Include="Encoders\ShiftingRegister.cs" />
     <Compile Include="Entities\Bit.cs" />
     <Compile Include="Entities\BitStream.cs" />

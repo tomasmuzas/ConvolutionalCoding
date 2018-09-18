@@ -25,28 +25,36 @@ namespace ConvolutionalCodes.Encoders
             var encodedStream = new List<Bit>();
             foreach (var bit in stream.ReadAllBits())
             {
-                IEnumerable<Bit> newBits = _register.Shift(bit);
-                var parityBits = GenerateParityBits(newBits);
+                // Get current bits from register
+                IEnumerable<Bit> newBits = _register.GetBits();
+                var parityBits = GenerateParityBits(bit, newBits);
+
+                // Add new bit to the register only after parity bits are generated
+                _register.Shift(bit);
                 encodedStream.AddRange(parityBits);
             }
 
             // Encode additional 6 bits to reset register state
             for (int i = 0; i < 6; i++)
             {
-                IEnumerable<Bit> newBits = _register.Shift(new Bit(0));
-                var parityBits = GenerateParityBits(newBits);
+                // Get current bits from register
+                IEnumerable<Bit> newBits = _register.GetBits();
+                var parityBits = GenerateParityBits(new Bit(0), newBits);
+
+                // Add new bit to the register only after parity bits are generated
+                _register.Shift(new Bit(0));
                 encodedStream.AddRange(parityBits);
             }
 
             return new BitStream(encodedStream);
         }
 
-        private IEnumerable<Bit> GenerateParityBits(IEnumerable<Bit> bits)
+        private IEnumerable<Bit> GenerateParityBits(Bit inputBit, IEnumerable<Bit> bits)
         {
             var parityBits = new List<Bit>();
             foreach (var generator in parityBitGenerators)
             {
-                var nextParityBit = generator.GeneratorFunction.Invoke(bits);
+                var nextParityBit = generator.Invoke(inputBit, bits);
                 parityBits.Add(nextParityBit);
             }
 

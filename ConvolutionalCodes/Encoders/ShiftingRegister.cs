@@ -21,7 +21,12 @@ namespace ConvolutionalCodes.Encoders
         {
             _bits.Dequeue();
             _bits.Enqueue(nextBit);
-            return _bits.AsEnumerable();
+            return _bits.AsEnumerable().Reverse();
+        }
+
+        public IEnumerable<Bit> GetBits()
+        {
+            return _bits.AsEnumerable().Reverse();
         }
     }
 }

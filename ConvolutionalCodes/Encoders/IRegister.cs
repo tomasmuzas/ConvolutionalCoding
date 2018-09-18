@@ -6,5 +6,7 @@ namespace ConvolutionalCodes.Encoders
     public interface IRegister
     {
         IEnumerable<Bit> Shift(Bit nextBit);
+
+        IEnumerable<Bit> GetBits();
     }
 }
