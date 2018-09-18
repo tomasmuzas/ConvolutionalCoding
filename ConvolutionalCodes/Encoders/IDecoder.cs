@@ -6,6 +6,6 @@ namespace ConvolutionalCodes.Encoders
     {
         IBitStream Decode(IBitStream stream);
 
-        void AddParityBitResolvers(ParityBitGenerator generator);
+        void AddParityBitResolver(ParityBitGenerator generator);
     }
 }
