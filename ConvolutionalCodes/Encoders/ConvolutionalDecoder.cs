@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using ConvolutionalCodes.Entities;
 
@@ -6,6 +6,11 @@ namespace ConvolutionalCodes.Encoders
 {
     public class ConvolutionalDecoder : IDecoder
     {
+        private Bit MajorityDecisionElement(IEnumerable<Bit> bits)
+        {
+            return bits.Count(b => b == new Bit(1)) > (bits.Count() / 2) ? new Bit(1) : new Bit(0);
+        }
+
         private IEnumerable<IRegister> _registers { get; set; }
 
         private List<ParityBitGenerator> parityBitResolvers { get; set; }
