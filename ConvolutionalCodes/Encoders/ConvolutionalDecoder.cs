@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using ConvolutionalCodes.Entities;
 
@@ -28,8 +28,8 @@ namespace ConvolutionalCodes.Encoders
 
             var bitRatio = 2;
 
-            // Go through all of the stream bits except last 6, which are just unnecessary info
-            for (int i = 0; i < encodedStream.Length - 6; i+= bitRatio)
+            // Go through all of the stream bits except last 12, which are just unnecessary info
+            for (int i = 0; i < encodedStream.Length - 12; i+= bitRatio)
             {
                 var encodedBits = encodedStream.ReadBits(bitRatio);
 
