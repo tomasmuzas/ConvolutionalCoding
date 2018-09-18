@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace ConvolutionalCodes.Entities
 {
@@ -41,7 +41,7 @@ namespace ConvolutionalCodes.Entities
             _position = _data.Count - 1;
         }
 
-        public BitStream(BitStream stream)
+        public BitStream(IBitStream stream)
         {
             _data = new List<Bit>();
             
@@ -51,6 +51,16 @@ namespace ConvolutionalCodes.Entities
             }
 
             _position = _data.Count - 1;
+        }
+
+        public static bool operator ==(BitStream stream1, BitStream stream2)
+        {
+            return stream1._data.SequenceEqual(stream2._data);
+        }
+
+        public static bool operator !=(BitStream stream1, BitStream stream2)
+        {
+            return !(stream1 == stream2);
         }
 
         /// <summary>
@@ -84,7 +94,9 @@ namespace ConvolutionalCodes.Entities
 
             foreach (var bit in this.ReadAllBits())
             {
+                // Shift 1 or 0 representation of a Bit to the right position
                 var positionalBit = (int)bit << (7 - bitCount);
+                // Set the right position of a byte
                 currentByte = (byte)(currentByte  | positionalBit);
 
                 if (++bitCount == 8)

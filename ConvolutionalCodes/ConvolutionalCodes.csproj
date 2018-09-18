@@ -51,6 +51,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Encoders\ConvolutionalEncoder.cs" />
+    <Compile Include="Encoders\IEncoder.cs" />
+    <Compile Include="Encoders\IRegister.cs" />
+    <Compile Include="Encoders\ParityBitGenerators.cs" />
+    <Compile Include="Encoders\ShiftingRegister.cs" />
     <Compile Include="Entities\Bit.cs" />
     <Compile Include="Entities\BitStream.cs" />
     <Compile Include="Entities\IBitStream.cs" />
@@ -75,6 +80,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Views\Application.resx">
+      <DependentUpon>Application.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
