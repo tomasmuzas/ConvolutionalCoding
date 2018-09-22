@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\MessageController.cs" />
     <Compile Include="Encoders\ConvolutionalDecoder.cs" />
     <Compile Include="Encoders\ConvolutionalEncoder.cs" />
     <Compile Include="Encoders\IDecoder.cs" />
@@ -97,5 +98,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
