@@ -1,9 +1,7 @@
 ﻿using ConvolutionalCodes.Controllers;
 using ConvolutionalCodes.Encoders;
 using ConvolutionalCodes.Entities;
-using ConvolutionalCodes.Utilities;
 using System;
-using System.Text;
 using System.Windows.Forms;
 
 namespace ConvolutionalCodes
@@ -13,10 +11,21 @@ namespace ConvolutionalCodes
         public Application()
         {
             InitializeComponent();
+        }
 
-            var initialText = "Labas, mano vardas Tomas";
+        private void TextSubmit_Click(object sender, EventArgs e)
+        {
+            var initialText = TextInput.Text;
 
-            var channel = new NoisyChannel(errorChance: 0.2);
+            string channelNoiseText = ChannelNoiseInput.Text;
+
+            if (!double.TryParse(channelNoiseText, out var noise) || noise < 0 || noise > 1 )
+            {
+                MessageBox.Show("Noise must be a number between 0 and 1.");
+                return;
+            }
+
+            var channel = new NoisyChannel(errorChance: noise);
 
             var unencodedText = MessageController.SendText(initialText, channel);
 
@@ -26,10 +35,22 @@ namespace ConvolutionalCodes
                 new ConvolutionalEncoder(),
                 new ConvolutionalDecoder());
 
-            Console.WriteLine("Initial text:\t\t\t\t\t\t" + initialText);
-            Console.WriteLine("Unencoded text after transmission:\t\t\t" + unencodedText);
-            Console.WriteLine("Encoded text after transmission:\t\t\t" + encodedText);
+            flowLayoutPanel1.Controls.Clear();
 
+            var initialTextLabel = new Label();
+            initialTextLabel.AutoSize = true;
+            initialTextLabel.Text = "Initial Text: " + initialText;
+            flowLayoutPanel1.Controls.Add(initialTextLabel);
+
+            var unencodedTextLabel = new Label();
+            unencodedTextLabel.AutoSize = true;
+            unencodedTextLabel.Text = "Unencoded Text: " + unencodedText;
+            flowLayoutPanel1.Controls.Add(unencodedTextLabel);
+
+            var encodedTextLabel = new Label();
+            encodedTextLabel.AutoSize = true;
+            encodedTextLabel.Text = "Encoded Text: " + encodedText;
+            flowLayoutPanel1.Controls.Add(encodedTextLabel);
         }
     }
 }
