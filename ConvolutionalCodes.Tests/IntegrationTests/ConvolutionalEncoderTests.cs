@@ -36,14 +36,7 @@ namespace ConvolutionalCodes.Tests.IntegrationTests
         private void AssertBits(IEnumerable<Bit> bitsToEncode, IEnumerable<Bit> expectedValues)
         {
             var bitStream = new BitStream(bitsToEncode);
-
-            var register = new ShiftingRegister(slotCount: 6);
-            var encoder = new ConvolutionalEncoder(register);
-
-            encoder.AddParityBitGenerator(ParityBitGenerators.ReturnFirstBit);
-            encoder.AddParityBitGenerator(ParityBitGenerators.PolynomialParityBitGenerator(
-                new int[] { 0, 1, 0, 0, 1, 1 },
-                useInputBit: true));
+            var encoder = new ConvolutionalEncoder();
 
             var result = encoder.Encode(bitStream);
 
