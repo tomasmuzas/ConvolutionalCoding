@@ -17,11 +17,11 @@ namespace ConvolutionalCodes.Encoders
             }
         }
 
-        public IEnumerable<Bit> Shift(Bit nextBit)
+        public Bit Shift(Bit nextBit)
         {
-            _bits.Dequeue();
+            var lastBit = _bits.Dequeue();
             _bits.Enqueue(nextBit);
-            return _bits.AsEnumerable().Reverse();
+            return lastBit;
         }
 
         public IEnumerable<Bit> GetBits()
