@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Text.RegularExpressions;
 using ConvolutionalCodes.Entities;
 
 namespace ConvolutionalCodes.Utilities
@@ -15,7 +16,7 @@ namespace ConvolutionalCodes.Utilities
         public string FromBitStream(IBitStream stream)
         {
             var bytes = stream.ToByteArray();
-            return _encoding.GetString(bytes);
+            return Regex.Replace(_encoding.GetString(bytes), @"\p{C}+", "?"); 
         }
 
         public IBitStream ToBitStream(string value)

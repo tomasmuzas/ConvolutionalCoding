@@ -44,16 +44,12 @@ namespace ConvolutionalCodes.Encoders
 
                 var secondRegisterBits = lowerRegister.GetBits();
 
-
-                var shiftedBit = lowerRegister.Shift(inputForSecondRegister);
                 var secondPartOfDecodedBit = MajorityDecisionElement(new Bit[] {
                     inputForSecondRegister,
                     secondRegisterBits.ElementAt(0),
-                    secondRegisterBits.ElementAt(4),
-                    shiftedBit
+                    secondRegisterBits.ElementAt(3),
+                    lowerRegister.Shift(inputForSecondRegister)
                 });
-
-                
 
                 var decodedBit = fistPartOfDecodedBit ^ secondPartOfDecodedBit;
                 decodedBits.Add(decodedBit);
