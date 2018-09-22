@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ConvolutionalCodes.Entities;
 
@@ -13,55 +14,66 @@ namespace ConvolutionalCodes.Encoders
 
         private IEnumerable<IRegister> _registers { get; set; }
 
-        private List<ParityBitGenerator> parityBitResolvers { get; set; }
-
-        public ConvolutionalDecoder(IEnumerable<IRegister> registers)
+        public ConvolutionalDecoder()
         {
-            _registers = registers;
-
-            parityBitResolvers = new List<ParityBitGenerator>();
-        }
-
-        public void AddParityBitResolver(ParityBitGenerator resolver)
-        {
-            parityBitResolvers.Add(resolver);
+            _registers = new List<IRegister> { new ShiftingRegister(6), new ShiftingRegister(6) };
         }
 
         public IBitStream Decode(IBitStream encodedStream)
         {
-            var decodedStream = new List<Bit>();
+            var decodedBits = new List<Bit>();
 
-            var bitRatio = 2;
+            var upperRegister = _registers.ElementAt(0);
+            var lowerRegister = _registers.ElementAt(1);
 
-            // Go through all of the stream bits except last 12, which are just unnecessary info
-            for (int i = 0; i < encodedStream.Length - 12; i+= bitRatio)
+            var position = 0;
+
+            while (position < encodedStream.Length)
             {
-                var encodedBits = encodedStream.ReadBits(bitRatio);
+                var encodedBits = encodedStream.ReadBits(2);
 
-                int bitIndex = 0;
+                var firstBit = encodedBits.ElementAt(0);
+                var secondBit = encodedBits.ElementAt(1);
 
-                var decodedBit = new Bit(0);
+                var firstRegisterBits = upperRegister.GetBits();
+                var xoredBit = XORBitsWithIndices(firstRegisterBits, new int[] { 2, 5, 6 });
 
-                foreach (var bit in encodedBits)
-                {
-                    var currentRegister = _registers.ElementAt(bitIndex);
-                    var registerBits = currentRegister.GetBits();
-                    decodedBit = decodedBit ^ RecoverPartOfBit();
+                var fistPartOfDecodedBit = upperRegister.Shift(firstBit);
 
-                    currentRegister.Shift(bit);
+                var inputForSecondRegister = firstBit ^ secondBit ^ xoredBit;
 
-                    bitIndex++;
-                }
+                var secondRegisterBits = lowerRegister.GetBits();
 
-                decodedStream.Add(decodedBit);
+
+                var shiftedBit = lowerRegister.Shift(inputForSecondRegister);
+                var secondPartOfDecodedBit = MajorityDecisionElement(new Bit[] {
+                    inputForSecondRegister,
+                    secondRegisterBits.ElementAt(0),
+                    secondRegisterBits.ElementAt(4),
+                    shiftedBit
+                });
+
+                
+
+                var decodedBit = fistPartOfDecodedBit ^ secondPartOfDecodedBit;
+                decodedBits.Add(decodedBit);
+
+                position+=2;
             }
 
-            return new BitStream(decodedStream);
+            return new BitStream(decodedBits.Skip(6));
         }
 
-        private Bit RecoverPartOfBit()
+        public Bit XORBitsWithIndices(IEnumerable<Bit> bits, IEnumerable<int> coeficients)
         {
-            return new Bit(0);
+            Bit generatedBit = new Bit(0);
+
+            foreach (var coeficient in coeficients)
+            {
+                generatedBit = generatedBit ^ bits.ElementAt(coeficient - 1);
+            }
+
+            return generatedBit;
         }
     }
 }
