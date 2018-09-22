@@ -36,21 +36,19 @@ namespace ConvolutionalCodes
                 new ConvolutionalDecoder());
 
             flowLayoutPanel1.Controls.Clear();
+            flowLayoutPanel1.Controls.Add(CreateLabelWithText("Initial Text: " + initialText));
+            flowLayoutPanel1.Controls.Add(CreateLabelWithText("Unencoded Text: " + unencodedText));
+            flowLayoutPanel1.Controls.Add(CreateLabelWithText("Encoded Text: " + encodedText));
+        }
 
-            var initialTextLabel = new Label();
-            initialTextLabel.AutoSize = true;
-            initialTextLabel.Text = "Initial Text: " + initialText;
-            flowLayoutPanel1.Controls.Add(initialTextLabel);
-
-            var unencodedTextLabel = new Label();
-            unencodedTextLabel.AutoSize = true;
-            unencodedTextLabel.Text = "Unencoded Text: " + unencodedText;
-            flowLayoutPanel1.Controls.Add(unencodedTextLabel);
-
-            var encodedTextLabel = new Label();
-            encodedTextLabel.AutoSize = true;
-            encodedTextLabel.Text = "Encoded Text: " + encodedText;
-            flowLayoutPanel1.Controls.Add(encodedTextLabel);
+        private Label CreateLabelWithText(string text)
+        {
+            var label = new Label();
+            label.AutoSize = true;
+            label.MaximumSize = new System.Drawing.Size(200, 0);
+            label.Text = text;
+            label.Margin = new Padding(0, 0, 0, 20);
+            return label;
         }
     }
 }
