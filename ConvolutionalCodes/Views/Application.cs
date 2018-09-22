@@ -1,9 +1,7 @@
 ﻿using ConvolutionalCodes.Controllers;
 using ConvolutionalCodes.Encoders;
 using ConvolutionalCodes.Entities;
-using ConvolutionalCodes.Utilities;
 using System;
-using System.Text;
 using System.Windows.Forms;
 
 namespace ConvolutionalCodes
@@ -13,10 +11,21 @@ namespace ConvolutionalCodes
         public Application()
         {
             InitializeComponent();
+        }
 
-            var initialText = "Labas, mano vardas Tomas";
+        private void TextSubmit_Click(object sender, EventArgs e)
+        {
+            var initialText = TextInput.Text;
 
-            var channel = new NoisyChannel(errorChance: 0.2);
+            string channelNoiseText = ChannelNoiseInput.Text;
+
+            if (!double.TryParse(channelNoiseText, out var noise) || noise < 0 || noise > 1 )
+            {
+                MessageBox.Show("Noise must be a number between 0 and 1.");
+                return;
+            }
+
+            var channel = new NoisyChannel(errorChance: noise);
 
             var unencodedText = MessageController.SendText(initialText, channel);
 
@@ -26,10 +35,20 @@ namespace ConvolutionalCodes
                 new ConvolutionalEncoder(),
                 new ConvolutionalDecoder());
 
-            Console.WriteLine("Initial text:\t\t\t\t\t\t" + initialText);
-            Console.WriteLine("Unencoded text after transmission:\t\t\t" + unencodedText);
-            Console.WriteLine("Encoded text after transmission:\t\t\t" + encodedText);
+            flowLayoutPanel1.Controls.Clear();
+            flowLayoutPanel1.Controls.Add(CreateLabelWithText("Initial Text: " + initialText));
+            flowLayoutPanel1.Controls.Add(CreateLabelWithText("Unencoded Text: " + unencodedText));
+            flowLayoutPanel1.Controls.Add(CreateLabelWithText("Encoded Text: " + encodedText));
+        }
 
+        private Label CreateLabelWithText(string text)
+        {
+            var label = new Label();
+            label.AutoSize = true;
+            label.MaximumSize = new System.Drawing.Size(200, 0);
+            label.Text = text;
+            label.Margin = new Padding(0, 0, 0, 20);
+            return label;
         }
     }
 }
