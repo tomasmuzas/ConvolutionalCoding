@@ -51,10 +51,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\MessageController.cs" />
+    <Compile Include="Encoders\ConvolutionalDecoder.cs" />
     <Compile Include="Encoders\ConvolutionalEncoder.cs" />
+    <Compile Include="Encoders\IDecoder.cs" />
     <Compile Include="Encoders\IEncoder.cs" />
     <Compile Include="Encoders\IRegister.cs" />
-    <Compile Include="Encoders\ParityBitGenerators.cs" />
     <Compile Include="Encoders\ShiftingRegister.cs" />
     <Compile Include="Entities\Bit.cs" />
     <Compile Include="Entities\BitStream.cs" />
@@ -96,5 +98,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

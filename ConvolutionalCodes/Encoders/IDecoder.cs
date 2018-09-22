@@ -2,8 +2,8 @@
 
 namespace ConvolutionalCodes.Encoders
 {
-    public interface IEncoder
+    public interface IDecoder
     {
-        IBitStream Encode(IBitStream stream);
+        IBitStream Decode(IBitStream stream);
     }
 }

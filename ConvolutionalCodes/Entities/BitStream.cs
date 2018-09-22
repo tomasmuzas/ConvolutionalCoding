@@ -24,7 +24,7 @@ namespace ConvolutionalCodes.Entities
             {
                 _data.Add(bit);
             }
-            _position = _data.Count - 1;
+            _position = 0;
         }
 
         public BitStream(IEnumerable<byte> bytes)
@@ -73,7 +73,7 @@ namespace ConvolutionalCodes.Entities
             List<Bit> bits = new List<Bit>(length);
             for (int i = 0; i < length ; i++)
             {
-                bits.Add(_data[_position--]);
+                bits.Add(_data[_position++]);
             }
             return bits;
         }

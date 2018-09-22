@@ -1,10 +1,10 @@
-﻿using ConvolutionalCodes.Encoders;
+﻿using ConvolutionalCodes.Controllers;
+using ConvolutionalCodes.Encoders;
 using ConvolutionalCodes.Entities;
 using ConvolutionalCodes.Utilities;
 using System;
 using System.Text;
 using System.Windows.Forms;
-using System.Linq;
 
 namespace ConvolutionalCodes
 {
@@ -13,26 +13,23 @@ namespace ConvolutionalCodes
         public Application()
         {
             InitializeComponent();
-            
-            IConverter<string> converter = new TextConverter(Encoding.UTF8);
 
-            IBitStream initialBits = converter.ToBitStream("abcXYZ");
-            var initialText = converter.FromBitStream(initialBits);
+            var initialText = "Labas, mano vardas Tomas";
 
-            ICommunicationChannel channel = new NoisyChannel(errorChance: 0.1);
+            var channel = new NoisyChannel(errorChance: 0.2);
 
-            IBitStream bitsAfterTransmission = channel.Transmit(initialBits);
-            var textAfterTransmission = converter.FromBitStream(bitsAfterTransmission);
+            var unencodedText = MessageController.SendText(initialText, channel);
 
-            IRegister register = new ShiftingRegister(slotCount: 6);
-            IEncoder encoder = new ConvolutionalEncoder(register);
+            var encodedText = MessageController.SendText(
+                initialText,
+                channel,
+                new ConvolutionalEncoder(),
+                new ConvolutionalDecoder());
 
-            // TODO: need to figure out what to do with input bit!!!
-            //encoder.AddParityBitGenerator(new CustomParityBitGenerator(bits => bits.First()));
-            //encoder.AddParityBitGenerator(new PolynomialParityBitGenerator(new int[] { 0, 1, 0, 0, 1, 1}));
+            Console.WriteLine("Initial text:\t\t\t\t\t\t" + initialText);
+            Console.WriteLine("Unencoded text after transmission:\t\t\t" + unencodedText);
+            Console.WriteLine("Encoded text after transmission:\t\t\t" + encodedText);
 
-            Console.WriteLine(initialText);
-            Console.WriteLine(textAfterTransmission);
         }
     }
 }
