@@ -63,6 +63,7 @@
     <Compile Include="Entities\IBitStream.cs" />
     <Compile Include="Entities\ICommunicationChannel.cs" />
     <Compile Include="Entities\NoisyChannel.cs" />
+    <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Utilities\IConverter.cs" />
     <Compile Include="Utilities\TextConverter.cs" />
     <Compile Include="Views\Application.cs">

@@ -1,15 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ConvolutionalCodes.Entities
 {
     public class BitStream : IBitStream
     {
-        private List<Bit> _data { get; set; }
+        private IEnumerable<Bit> _data { get; set; }
 
         private int _position { get; set; }
 
-        public int Length => _data.Count;
+        public int Length => _data.Count();
 
         public BitStream()
         {
@@ -19,38 +20,30 @@ namespace ConvolutionalCodes.Entities
 
         public BitStream(IEnumerable<Bit> bits)
         {
-            _data = new List<Bit>();
-            foreach (var bit in bits)
-            {
-                _data.Add(bit);
-            }
+            _data = bits;
             _position = 0;
         }
 
         public BitStream(IEnumerable<byte> bytes)
         {
-            _data = new List<Bit>();
+            var list = new List<Bit>();
             foreach(var b in bytes)
             {
                 for (int i = 0; i <= 7; i++)
                 {
                     var bit = new Bit(b >> (7 - i));
-                    _data.Add(bit); 
+                    list.Add(bit); 
                 }
             }
-            _position = _data.Count - 1;
+
+            _data = list;
+            _position = 0;
         }
 
         public BitStream(IBitStream stream)
         {
-            _data = new List<Bit>();
-            
-            foreach (var bit in stream.ReadAllBits())
-            {
-                _data.Add(bit);
-            }
-
-            _position = _data.Count - 1;
+            _data = stream.ReadAllBits();
+            _position = 0;
         }
 
         public static bool operator ==(BitStream stream1, BitStream stream2)
@@ -70,44 +63,42 @@ namespace ConvolutionalCodes.Entities
         /// <returns><see cref="IEnumerable{Bit}"/> of specified length</returns>
         public IEnumerable<Bit> ReadBits(int length)
         {
-            List<Bit> bits = new List<Bit>(length);
-            for (int i = 0; i < length ; i++)
-            {
-                bits.Add(_data[_position++]);
-            }
-            return bits;
+            var returnData = _data.Skip(_position).Take(length);
+            _position += length;
+            return returnData;
         }
 
         public IEnumerable<Bit> ReadAllBits()
         {
-            foreach (var bit in _data)
-            {
-                yield return bit;
-            }
+            return _data;
         }
 
         public byte[] ToByteArray()
         {
-            var bytes = new List<byte>();
-            int bitCount = 0;
-            byte currentByte = 0;
-
-            foreach (var bit in this.ReadAllBits())
-            {
-                // Shift 1 or 0 representation of a Bit to the right position
-                var positionalBit = (int)bit << (7 - bitCount);
-                // Set the right position of a byte
-                currentByte = (byte)(currentByte  | positionalBit);
-
-                if (++bitCount == 8)
-                {
-                    bytes.Add(currentByte);
-                    currentByte = 0;
-                    bitCount = 0;
-                }
-            }
-
-            return bytes.ToArray();
+//            var bytes = new List<byte>();
+//            int bitCount = 0;
+//            byte currentByte = 0;
+//
+//            foreach (var bit in _data)
+//            {
+//                // Shift 1 or 0 representation of a Bit to the right position
+//                var positionalBit = (int)bit << (7 - bitCount);
+//                // Set the right position of a byte
+//                currentByte = (byte)(currentByte  | positionalBit);
+//
+//                if (++bitCount == 8)
+//                {
+//                    bytes.Add(currentByte);
+//                    currentByte = 0;
+//                    bitCount = 0;
+//                }
+//            }
+//
+//            return bytes.ToArray();
+            var bitArray = new BitArray(_data.Select(b => (bool)b).ToArray());
+            byte[] bytes = new byte[bitArray.Length / 8];
+            bitArray.CopyTo(bytes, 0);
+            return bytes;
         }
     }
 }

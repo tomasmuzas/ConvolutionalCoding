@@ -38,7 +38,7 @@
             this.channelNoiseLabel = new System.Windows.Forms.Label();
             this.ChannelNoiseInput = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.encodingResultPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.SuspendLayout();
             // 
             // enterTextLabel
@@ -75,6 +75,7 @@
             this.uploadImageButton.TabIndex = 3;
             this.uploadImageButton.Text = "Upload Image";
             this.uploadImageButton.UseVisualStyleBackColor = true;
+            this.uploadImageButton.Click += new System.EventHandler(this.uploadImageButton_Click);
             // 
             // resultLabel
             // 
@@ -135,23 +136,23 @@
             this.label1.TabIndex = 9;
             this.label1.Text = "Actions";
             // 
-            // flowLayoutPanel1
+            // encodingResultPanel
             // 
-            this.flowLayoutPanel1.AutoScroll = true;
-            this.flowLayoutPanel1.AutoScrollMargin = new System.Drawing.Size(0, 450);
-            this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(296, 56);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(820, 450);
-            this.flowLayoutPanel1.TabIndex = 10;
+            this.encodingResultPanel.AutoScroll = true;
+            this.encodingResultPanel.AutoScrollMargin = new System.Drawing.Size(0, 450);
+            this.encodingResultPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.encodingResultPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.encodingResultPanel.Location = new System.Drawing.Point(296, 56);
+            this.encodingResultPanel.Name = "encodingResultPanel";
+            this.encodingResultPanel.Size = new System.Drawing.Size(820, 450);
+            this.encodingResultPanel.TabIndex = 10;
             // 
             // Application
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1141, 527);
-            this.Controls.Add(this.flowLayoutPanel1);
+            this.Controls.Add(this.encodingResultPanel);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.ChannelNoiseInput);
             this.Controls.Add(this.channelNoiseLabel);
@@ -183,7 +184,7 @@
         private System.Windows.Forms.Label channelNoiseLabel;
         private System.Windows.Forms.TextBox ChannelNoiseInput;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.FlowLayoutPanel encodingResultPanel;
     }
 }
 
