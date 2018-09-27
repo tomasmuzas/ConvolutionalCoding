@@ -32,16 +32,16 @@ namespace ConvolutionalCodes
 
             var unencodedText = await MessageController.SendText(initialText, channel);
 
-//            var encodedText = await MessageController.SendText(
-//                initialText,
-//                channel,
-//                new ConvolutionalEncoder(),
-//                new ConvolutionalDecoder());
+            var encodedText = await MessageController.SendText(
+                initialText,
+                channel,
+                new ConvolutionalEncoder(),
+                new ConvolutionalDecoder());
 
             encodingResultPanel.Controls.Clear();
             encodingResultPanel.Controls.Add(CreateLabelWithText("Initial Text: " + initialText));
             encodingResultPanel.Controls.Add(CreateLabelWithText("Unencoded Text: " + unencodedText));
-//            encodingResultPanel.Controls.Add(CreateLabelWithText("Encoded Text: " + encodedText));
+            encodingResultPanel.Controls.Add(CreateLabelWithText("Encoded Text: " + encodedText));
         }
 
         private Label CreateLabelWithText(string text)
@@ -129,6 +129,7 @@ namespace ConvolutionalCodes
         private async void uploadImageButton_Click(object sender, EventArgs e)
         {
             encodingResultPanel.Controls.Clear();
+            encodingResultPanel.Controls.Add(CreateLabelWithText("Loading images... Please wait."));
             var dialog = new OpenFileDialog
             {
                 ShowHelp = true,
@@ -168,7 +169,7 @@ namespace ConvolutionalCodes
                     new ConvolutionalDecoder());
                 var encodedImage = SetImageBytes(scaledImage, encodedImageBytes);
 
-                
+                encodingResultPanel.Controls.Clear();
                 encodingResultPanel.Controls.Add(CreatePanelWithLabel(scaledImage, "Original Image:"));
                 encodingResultPanel.Controls.Add(CreatePanelWithLabel(unencodedImage, "Unencoded Transmission:"));
                 encodingResultPanel.Controls.Add(CreatePanelWithLabel(encodedImage, "Encoded Transmission:"));
