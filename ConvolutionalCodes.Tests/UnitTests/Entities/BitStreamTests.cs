@@ -19,7 +19,7 @@ namespace ConvolutionalCodes.Tests.UnitTests
             var testData = bits
                 .Select(b => new Bit(b));
 
-            IBitStream bitStream = new BitStream(testData);
+            IBitStream bitStream = new BitStream(testData.ToArray());
 
             var result = bitStream.ReadAllBits();
 
@@ -40,9 +40,9 @@ namespace ConvolutionalCodes.Tests.UnitTests
             IEnumerable<byte> bytes,
             IEnumerable<bool> bools)
         {
-            var testData = bools.Select(b => new Bit(b));
+            var testData = bools.Select(b => new Bit(b)).ToArray();
 
-            IBitStream bitStream = new BitStream(bytes);
+            IBitStream bitStream = new BitStream(bytes.ToArray());
 
             var result = bitStream.ReadAllBits();
 
@@ -63,12 +63,12 @@ namespace ConvolutionalCodes.Tests.UnitTests
     new byte[] { },
     new bool[] { })]
         public void BitStream_ToByteArray_Success(
-    IEnumerable<byte> bytes,
-    IEnumerable<bool> bools)
+    byte[] bytes,
+    bool[] bools)
         {
             var testData = bools.Select(b => new Bit(b));
 
-            IBitStream bitStream = new BitStream(bytes);
+            IBitStream bitStream = new BitStream(testData.ToArray());
 
             var result = bitStream.ToByteArray();
 
