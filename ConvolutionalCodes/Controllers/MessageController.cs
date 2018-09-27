@@ -27,14 +27,14 @@ namespace ConvolutionalCodes.Controllers
             return await Task.FromResult(converter.FromBitStream(decodedBits));
         }
 
-        public static async Task<byte[]> SendBytes(IEnumerable<byte> bytes, ICommunicationChannel channel)
+        public static async Task<byte[]> SendBytes(byte[] bytes, ICommunicationChannel channel)
         {
             var bits = new BitStream(bytes);
             var bitsAfterTransmission = await Task.FromResult(channel.Transmit(bits));
             return await Task.FromResult(bitsAfterTransmission.ToByteArray());
         }
 
-        public static async Task<byte[]> SendBytes(IEnumerable<byte> bytes, ICommunicationChannel channel, IEncoder encoder, IDecoder decoder)
+        public static async Task<byte[]> SendBytes(byte[] bytes, ICommunicationChannel channel, IEncoder encoder, IDecoder decoder)
         {
             var bits = new BitStream(bytes);
             var encodedBits = await Task.FromResult(encoder.Encode(bits));
