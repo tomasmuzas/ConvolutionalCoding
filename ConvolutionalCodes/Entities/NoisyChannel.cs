@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 namespace ConvolutionalCodes.Entities
 {
@@ -19,12 +20,20 @@ namespace ConvolutionalCodes.Entities
 
         public IBitStream Transmit(IBitStream stream)
         {
-            var randomNumberGenerator = new Random(1892365);
+            var randomNumberGenerator = new Random();
 
-            var newValues = stream
-                .ReadAllBits()
-                .Select(bit =>
-                    (randomNumberGenerator.Next(10000) / 10000.0f)  < _errorChance ? !bit : bit);
+            var newValues = new Bit[stream.Length];
+            var oldValues = stream.ReadAllBits();
+
+            for(int counter = 0; counter < stream.Length; counter ++)
+            {
+                var bit = oldValues[counter];
+                var randomDouble = randomNumberGenerator.NextDouble();
+
+                var newBit = randomDouble < _errorChance ? !bit : bit;
+
+                newValues[counter] = newBit;
+            }
 
             return new BitStream(newValues);
         }
