@@ -32,39 +32,49 @@ namespace ConvolutionalCodes
 
             var unencodedText = await MessageController.SendText(initialText, channel);
 
-            var encodedText = await MessageController.SendText(
-                initialText,
-                channel,
-                new ConvolutionalEncoder(),
-                new ConvolutionalDecoder());
+//            var encodedText = await MessageController.SendText(
+//                initialText,
+//                channel,
+//                new ConvolutionalEncoder(),
+//                new ConvolutionalDecoder());
 
             encodingResultPanel.Controls.Clear();
             encodingResultPanel.Controls.Add(CreateLabelWithText("Initial Text: " + initialText));
             encodingResultPanel.Controls.Add(CreateLabelWithText("Unencoded Text: " + unencodedText));
-            encodingResultPanel.Controls.Add(CreateLabelWithText("Encoded Text: " + encodedText));
+//            encodingResultPanel.Controls.Add(CreateLabelWithText("Encoded Text: " + encodedText));
         }
 
         private Label CreateLabelWithText(string text)
         {
-            var label = new Label();
-            label.AutoSize = true;
-            label.MaximumSize = new System.Drawing.Size(200, 0);
-            label.Text = text;
-            label.Margin = new Padding(0, 0, 0, 20);
+            var label = new Label
+            {
+                AutoSize = true,
+                Text = text
+            };
             return label;
         }
 
-        private PictureBox CreatePictureBox(Bitmap bmp)
+        private FlowLayoutPanel CreatePanelWithLabel(Bitmap bmp, string text)
         {
-            var pictureBox = new PictureBox();
-            var newWidth = 200;
-            var newHeight = bmp.Height / ((double)bmp.Width / 200);
-            pictureBox.Image = new Bitmap(bmp, new Size(newWidth, (int)newHeight));
+            var layout = new FlowLayoutPanel
+            {
+                FlowDirection = FlowDirection.TopDown,
+                AutoSize = true,
+                MaximumSize = new Size(200, 0),
+                WrapContents = true
+            };
+            var pictureBox = new PictureBox
+            {
+                Image = bmp,
+                Width = bmp.Width,
+                Height = bmp.Height
+            };
 
-            bmp.Dispose();
-            pictureBox.Width = newWidth;
-            pictureBox.Height = (int)newHeight;
-            return pictureBox;
+            var label = CreateLabelWithText(text);
+            layout.Controls.Add(label);
+            layout.Controls.Add(pictureBox);
+
+            return layout;
         }
 
         public byte[] GetImageBytes(Bitmap bmp)
@@ -119,16 +129,23 @@ namespace ConvolutionalCodes
         private async void uploadImageButton_Click(object sender, EventArgs e)
         {
             encodingResultPanel.Controls.Clear();
-            var dialog = new OpenFileDialog();
-            dialog.ShowHelp = true;
-            dialog.Filter = "Image Files(*.jpeg;*.bmp;*.png;*.jpg)|*.jpeg;*.bmp;*.png;*.jpg";
-            dialog.InitialDirectory = @"c:\test";
-            dialog.RestoreDirectory = false;
+            var dialog = new OpenFileDialog
+            {
+                ShowHelp = true,
+                Filter = "Image Files(*.jpeg;*.bmp;*.png;*.jpg)|*.jpeg;*.bmp;*.png;*.jpg"
+            };
+
             DialogResult Action = dialog.ShowDialog();
             if (Action == DialogResult.OK)
             {
+                
                 Bitmap originalImage = new Bitmap(dialog.FileName);
-                var imageBytes = GetImageBytes(originalImage);
+                var scaledHeight = originalImage.Height / ((double)originalImage.Width / 200);
+
+                Bitmap scaledImage = new Bitmap(originalImage, new Size(200, (int)scaledHeight));
+                originalImage.Dispose();
+
+                var imageBytes = GetImageBytes(scaledImage);
 
                 string channelNoiseText = ChannelNoiseInput.Text;
                 if (!double.TryParse(channelNoiseText, out var noise) || noise < 0 || noise > 1)
@@ -137,27 +154,24 @@ namespace ConvolutionalCodes
                     return;
                 }
 
-                var channel = new NoisyChannel(errorChance: noise);
+                var channel = new NoisyChannel(noise);
 
                 var unencodedImageBytes = await MessageController.SendBytes(imageBytes, channel);
-                var unencodedImage = SetImageBytes(originalImage, unencodedImageBytes);
+                var unencodedImage = SetImageBytes(scaledImage, unencodedImageBytes);
 
 
 
-//                var encodedImageBytes = await MessageController.SendBytes(
-//                    imageBytes,
-//                    channel,
-//                    new ConvolutionalEncoder(),
-//                    new ConvolutionalDecoder());
-//                var encodedImage = SetImageBytes(originalImage, encodedImageBytes);
+                var encodedImageBytes = await MessageController.SendBytes(
+                    imageBytes,
+                    channel,
+                    new ConvolutionalEncoder(),
+                    new ConvolutionalDecoder());
+                var encodedImage = SetImageBytes(scaledImage, encodedImageBytes);
 
-
-                encodingResultPanel.Controls.Add(CreateLabelWithText("Orginal Image:"));
-                encodingResultPanel.Controls.Add(CreatePictureBox(originalImage));
-                encodingResultPanel.Controls.Add(CreateLabelWithText("Unencoded Image:"));
-                encodingResultPanel.Controls.Add(CreatePictureBox(unencodedImage));
-//                encodingResultPanel.Controls.Add(CreateLabelWithText("Encoded Image:"));
-//                encodingResultPanel.Controls.Add(CreatePictureBox(encodedImage));
+                
+                encodingResultPanel.Controls.Add(CreatePanelWithLabel(scaledImage, "Original Image:"));
+                encodingResultPanel.Controls.Add(CreatePanelWithLabel(unencodedImage, "Unencoded Transmission:"));
+                encodingResultPanel.Controls.Add(CreatePanelWithLabel(encodedImage, "Encoded Transmission:"));
             }
         }
     }

@@ -141,11 +141,11 @@
             this.encodingResultPanel.AutoScroll = true;
             this.encodingResultPanel.AutoScrollMargin = new System.Drawing.Size(0, 450);
             this.encodingResultPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.encodingResultPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.encodingResultPanel.Location = new System.Drawing.Point(296, 56);
             this.encodingResultPanel.Name = "encodingResultPanel";
             this.encodingResultPanel.Size = new System.Drawing.Size(820, 450);
             this.encodingResultPanel.TabIndex = 10;
+            this.encodingResultPanel.WrapContents = false;
             // 
             // Application
             // 
