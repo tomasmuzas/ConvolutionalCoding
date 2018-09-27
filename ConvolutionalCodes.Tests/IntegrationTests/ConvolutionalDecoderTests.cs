@@ -17,7 +17,7 @@ namespace ConvolutionalCodes.Tests.IntegrationTests
             var bitsToDecode = bitValues.Select(v => new Bit(v));
             var expectedBits = expectedBitValues.Select(v => new Bit(v));
 
-            AssertBits(bitsToDecode, expectedBits);
+            AssertBits(bitsToDecode.ToArray(), expectedBits.ToArray());
         }
 
         [Theory]
@@ -31,10 +31,10 @@ namespace ConvolutionalCodes.Tests.IntegrationTests
 
             bitsToEncode.AddRange(bitValues.Select(v => new Bit(v)));
 
-            AssertBits(bitsToEncode, expectedValues.Select(v => new Bit(v)));
+            AssertBits(bitsToEncode.ToArray(), expectedValues.Select(v => new Bit(v)).ToArray());
         }
 
-        private void AssertBits(IEnumerable<Bit> bitsToDecode, IEnumerable<Bit> expectedValues)
+        private void AssertBits(Bit[] bitsToDecode, Bit[] expectedValues)
         {
             var bitStream = new BitStream(bitsToDecode);
 
