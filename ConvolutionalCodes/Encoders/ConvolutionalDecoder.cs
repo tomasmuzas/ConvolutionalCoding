@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using ConvolutionalCodes.Entities;
 
@@ -7,36 +6,38 @@ namespace ConvolutionalCodes.Encoders
 {
     public class ConvolutionalDecoder : IDecoder
     {
-        private Bit MajorityDecisionElement(IEnumerable<Bit> bits)
+        private Bit MajorityDecisionElement(Bit[] bits)
         {
-            return bits.Count(b => b == new Bit(1)) > (bits.Count() / 2) ? new Bit(1) : new Bit(0);
-        }
+            var trueCount = 0;
+            for (var i = 0; i < bits.Length; i++)
+            {
+                if (bits[i] == true) trueCount++;
+            }
 
-        private IEnumerable<IRegister> _registers { get; set; }
-
-        public ConvolutionalDecoder()
-        {
-            _registers = new List<IRegister> { new ShiftingRegister(6), new ShiftingRegister(6) };
+            return trueCount > bits.Length / 2 ? new Bit(true) : new Bit(false);
         }
 
         public IBitStream Decode(IBitStream encodedStream)
         {
-            var decodedBits = new List<Bit>();
+            var decodedBits = new Bit[encodedStream.Length / 2 ];
+            var encodedBits = encodedStream.ReadAllBits();
+            
+            var streamPosition = 0;
+            var decodedStreamPosition = 0;
 
-            var upperRegister = _registers.ElementAt(0);
-            var lowerRegister = _registers.ElementAt(1);
+            var upperRegister = new ShiftingRegister(6);
+            var lowerRegister = new ShiftingRegister(6);
 
-            var position = 0;
-
-            while (position < encodedStream.Length)
+            while (streamPosition < encodedStream.Length)
             {
-                var encodedBits = encodedStream.ReadBits(2);
-
-                var firstBit = encodedBits.ElementAt(0);
-                var secondBit = encodedBits.ElementAt(1);
+                var firstBit = encodedBits[streamPosition++];
+                var secondBit = encodedBits[streamPosition++];
 
                 var firstRegisterBits = upperRegister.GetBits();
-                var xoredBit = XORBitsWithIndices(firstRegisterBits, new int[] { 2, 5, 6 });
+                var xoredBit = 
+                    firstRegisterBits[1] 
+                    ^ firstRegisterBits[4] 
+                    ^ firstRegisterBits[5];
 
                 var fistPartOfDecodedBit = upperRegister.Shift(firstBit);
 
@@ -44,32 +45,18 @@ namespace ConvolutionalCodes.Encoders
 
                 var secondRegisterBits = lowerRegister.GetBits();
 
-                var secondPartOfDecodedBit = MajorityDecisionElement(new Bit[] {
+                var secondPartOfDecodedBit = MajorityDecisionElement(new [] {
                     inputForSecondRegister,
-                    secondRegisterBits.ElementAt(0),
-                    secondRegisterBits.ElementAt(3),
+                    secondRegisterBits[0],
+                    secondRegisterBits[3],
                     lowerRegister.Shift(inputForSecondRegister)
                 });
 
                 var decodedBit = fistPartOfDecodedBit ^ secondPartOfDecodedBit;
-                decodedBits.Add(decodedBit);
-
-                position+=2;
+                decodedBits[decodedStreamPosition++] = decodedBit;
             }
 
-            return new BitStream(decodedBits.Skip(6));
-        }
-
-        public Bit XORBitsWithIndices(IEnumerable<Bit> bits, IEnumerable<int> coeficients)
-        {
-            Bit generatedBit = new Bit(0);
-
-            foreach (var coeficient in coeficients)
-            {
-                generatedBit = generatedBit ^ bits.ElementAt(coeficient - 1);
-            }
-
-            return generatedBit;
+            return new BitStream(decodedBits.Skip(6).ToArray());
         }
     }
 }

@@ -1,11 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 namespace ConvolutionalCodes.Entities
 {
     public class NoisyChannel : ICommunicationChannel
     {
-        private double _errorChance { get; set; }
+        private readonly double _errorChance;
 
         /// <summary>
         /// Creates a communication channel with a given error rate
@@ -18,14 +20,19 @@ namespace ConvolutionalCodes.Entities
 
         public IBitStream Transmit(IBitStream stream)
         {
-            var newValues = new List<Bit>();
-
             var randomNumberGenerator = new Random();
 
-            foreach (var bit in stream.ReadAllBits())
+            var newValues = new Bit[stream.Length];
+            var oldValues = stream.ReadAllBits();
+
+            for(int counter = 0; counter < stream.Length; counter ++)
             {
-                bool errorHappened = randomNumberGenerator.NextDouble() < _errorChance;
-                newValues.Add(errorHappened ? !bit : bit);
+                var bit = oldValues[counter];
+                var randomDouble = randomNumberGenerator.NextDouble();
+
+                var newBit = randomDouble < _errorChance ? !bit : bit;
+
+                newValues[counter] = newBit;
             }
 
             return new BitStream(newValues);

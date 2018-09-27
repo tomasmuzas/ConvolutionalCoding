@@ -1,70 +1,40 @@
-using System.Collections.Generic;
-using System.Linq;
+using System;
 using ConvolutionalCodes.Entities;
+using ConvolutionalCodes.Extensions;
 
 namespace ConvolutionalCodes.Encoders
 {
     public class ConvolutionalEncoder : IEncoder
-    {
-        private IRegister _register { get; set; }
-       
-
-        public ConvolutionalEncoder()
-        {
-            _register = new ShiftingRegister(6);
-        }
-
+    { 
         public IBitStream Encode(IBitStream stream)
         {
-            var encodedStream = new List<Bit>();
-            foreach (var bit in stream.ReadAllBits())
-            {
-                // First step - add input bit directly to the encoded message
-                encodedStream.Add(bit);
+            var encodedStream = new Bit[2 * stream.Length + 12];
 
-                var bits = _register.GetBits();
-
-                var xoredBit = XORBitsWithIndices(bits, new int[] { 2, 5, 6});
-                xoredBit = xoredBit ^ bit;
-
-                encodedStream.Add(xoredBit);
-
-                // Add new bit to the register only after parity bits are generated
-                _register.Shift(bit);
-            }
-
-            // Encode additional 6 bits to reset register state
+            var bitsToEncode = new Bit[stream.Length + 6];
             for (int i = 0; i < 6; i++)
             {
-                var inputBit = new Bit(0);
-                // First step - add input bit directly to the encoded message
-                encodedStream.Add(inputBit);
-
-                var bits = _register.GetBits();
-
-                var xoredBit = XORBitsWithIndices(bits, new int[] { 2, 5, 6 });
-                xoredBit = xoredBit ^ inputBit;
-
-                encodedStream.Add(xoredBit);
-
-                // Add new bit to the register only after parity bits are generated
-                _register.Shift(inputBit);
+                bitsToEncode[i] = new Bit(false);
             }
 
-            return new BitStream(encodedStream);
-        }
+            var bits = stream.ReadAllBits();
+            Array.Copy(bits, 0, bitsToEncode, 6, bits.Length);
 
+            var position = 0;
+            var streamPosition = 0;
+            var bitsCount = bitsToEncode.Length;
 
-        public Bit XORBitsWithIndices(IEnumerable<Bit> bits, IEnumerable<int> coeficients)
-        {
-            Bit generatedBit = new Bit(0);
-
-            foreach (var coeficient in coeficients)
+            while (position < bitsCount)
             {
-                generatedBit = generatedBit ^ bits.ElementAt(coeficient - 1);
+                var inputBit = bitsToEncode.GetBitOrDefault(position + 6);
+                var secondBit = inputBit
+                    ^ bitsToEncode.GetBitOrDefault(position + 4) // reversed 2nd bit (6 - 2)
+                    ^ bitsToEncode.GetBitOrDefault(position + 1) // reversed 5th bit (6 - 5)
+                    ^ bitsToEncode.GetBitOrDefault(position); // reversed 6th bit (6 - 6)
+                encodedStream[streamPosition++] = inputBit;
+                encodedStream[streamPosition++] = secondBit;
+                position++;
             }
-
-            return generatedBit;
+            return new BitStream(encodedStream);
         }
     }
 }

@@ -7,6 +7,6 @@ namespace ConvolutionalCodes.Encoders
     {
         Bit Shift(Bit nextBit);
 
-        IEnumerable<Bit> GetBits();
+        Bit[] GetBits();
     }
 }

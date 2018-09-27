@@ -1,32 +1,36 @@
-﻿using System.Collections.Generic;
-using ConvolutionalCodes.Entities;
-using System.Linq;
+﻿using ConvolutionalCodes.Entities;
 
 namespace ConvolutionalCodes.Encoders
 {
     public class ShiftingRegister : IRegister
     {
-        private Queue<Bit> _bits { get; set; }
+        private readonly Bit[] _bits;
 
         public ShiftingRegister(int slotCount)
         {
-            _bits = new Queue<Bit>(slotCount);
+            _bits = new Bit[slotCount];
             for (int i = 0; i < slotCount; i++)
             {
-                _bits.Enqueue(new Bit(0));
+                _bits[i] = new Bit(0);
             }
         }
 
         public Bit Shift(Bit nextBit)
         {
-            var lastBit = _bits.Dequeue();
-            _bits.Enqueue(nextBit);
-            return lastBit;
+            var returnBit = _bits[_bits.Length - 1];
+
+            for (int i = _bits.Length - 1; i > 0; i--)
+            {
+                _bits[i] = _bits[i - 1];
+            }
+
+            _bits[0] = nextBit;
+            return returnBit;
         }
 
-        public IEnumerable<Bit> GetBits()
+        public Bit[] GetBits()
         {
-            return _bits.AsEnumerable().Reverse();
+            return _bits;
         }
     }
 }

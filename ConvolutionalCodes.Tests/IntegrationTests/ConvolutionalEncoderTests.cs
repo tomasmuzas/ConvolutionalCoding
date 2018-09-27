@@ -10,8 +10,8 @@ namespace ConvolutionalCodes.Tests.IntegrationTests
     public class ConvolutionalEncoderTests : CollectionTest
     {
         [Theory]
-        [InlineData(T, new bool[]{T, T, F, F, F, T, F, F, F, F, F, T, F, T})]
-        [InlineData(F, new bool[] { F, F, F, F, F, F, F, F, F, F, F, F, F, F })]
+        [InlineData(T, new []{T, T, F, F, F, T, F, F, F, F, F, T, F, T})]
+        [InlineData(F, new [] { F, F, F, F, F, F, F, F, F, F, F, F, F, F })]
         public void ConvolutionalEncoder_OneBit_Success(bool bitValue, IEnumerable<bool> expectedValues)
         {
             var bitsToEncode = new List<Bit> { new Bit(bitValue) };
@@ -20,10 +20,10 @@ namespace ConvolutionalCodes.Tests.IntegrationTests
         }
 
         [Theory]
-        [InlineData(new bool[] { T, T}, new bool[] { T, T, T, T, F, T, F, T, F, F, F, T, F, F, F, T })]
-        [InlineData(new bool[] { T, F }, new bool[] { T, T, F, F, F, T, F, F, F, F, F, T, F, T, F, F })]
-        [InlineData(new bool[] { F, T }, new bool[] { F, F, T, T, F, F, F, T, F, F, F, F, F, T, F, T })]
-        [InlineData(new bool[] { F, F }, new bool[] { F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F })]
+        [InlineData(new [] { T, T}, new [] { T, T, T, T, F, T, F, T, F, F, F, T, F, F, F, T })]
+        [InlineData(new [] { T, F }, new [] { T, T, F, F, F, T, F, F, F, F, F, T, F, T, F, F })]
+        [InlineData(new [] { F, T }, new [] { F, F, T, T, F, F, F, T, F, F, F, F, F, T, F, T })]
+        [InlineData(new [] { F, F }, new [] { F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F })]
         public void ConvolutionalEncoder_MoreBits_Success(IEnumerable<bool> bitValues, IEnumerable<bool> expectedValues)
         {
             var bitsToEncode = new List<Bit>();
@@ -35,15 +35,16 @@ namespace ConvolutionalCodes.Tests.IntegrationTests
 
         private void AssertBits(IEnumerable<Bit> bitsToEncode, IEnumerable<Bit> expectedValues)
         {
-            var bitStream = new BitStream(bitsToEncode);
+            var bitsArray = bitsToEncode.ToArray();
+            var bitStream = new BitStream(bitsArray);
             var encoder = new ConvolutionalEncoder();
 
             var result = encoder.Encode(bitStream);
 
-            var expectedStream = new BitStream(expectedValues);
+            var expectedStream = new BitStream(expectedValues.ToArray());
 
             // Resulting stream should always be 2 * n + 12 length
-            Assert.True(((BitStream)result).Length == 2 * bitsToEncode.Count() + 12);
+            Assert.True(((BitStream)result).Length == 2 * bitsArray.Length + 12);
             Assert.True(expectedStream == (BitStream)result);
         }
     }
