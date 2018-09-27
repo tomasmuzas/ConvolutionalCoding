@@ -70,8 +70,8 @@ namespace ConvolutionalCodes
                 Height = bmp.Height
             };
 
-            var label = CreateLabelWithText(text);
-            layout.Controls.Add(label);
+            //var label = CreateLabelWithText(text);
+            //layout.Controls.Add(label);
             layout.Controls.Add(pictureBox);
 
             return layout;
