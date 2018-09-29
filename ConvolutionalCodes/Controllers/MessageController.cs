@@ -33,7 +33,7 @@ namespace ConvolutionalCodes.Controllers
             var result = await Task.FromResult(converter.FromBitStream(decodedBits));
             return new StringResult
             {
-                Errors = bits.Difference(bitsAfterTransmission),
+                Errors = bits.Difference(decodedBits),
                 Result = result
             };
         }

@@ -67,6 +67,7 @@
     <Compile Include="Extensions\BitArrayExtensions.cs" />
     <Compile Include="Utilities\BitmapHelper.cs" />
     <Compile Include="Utilities\IConverter.cs" />
+    <Compile Include="Utilities\MathHelper.cs" />
     <Compile Include="Utilities\TextConverter.cs" />
     <Compile Include="Utilities\UIHelper.cs" />
     <Compile Include="Views\Application.cs">
