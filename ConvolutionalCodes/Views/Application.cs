@@ -54,7 +54,7 @@ namespace ConvolutionalCodes
             return label;
         }
 
-        private FlowLayoutPanel CreatePanelWithLabel(Bitmap bmp, string text)
+        private FlowLayoutPanel CreateImagePanel(Bitmap bmp)
         {
             var layout = new FlowLayoutPanel
             {
@@ -70,14 +70,12 @@ namespace ConvolutionalCodes
                 Height = bmp.Height
             };
 
-            //var label = CreateLabelWithText(text);
-            //layout.Controls.Add(label);
             layout.Controls.Add(pictureBox);
 
             return layout;
         }
 
-        public byte[] GetImageBytes(Bitmap bmp)
+        public byte[] GetColorBytes(Bitmap bmp)
         {
             // Lock the bitmap's bits.  
             Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
@@ -113,9 +111,6 @@ namespace ConvolutionalCodes
             // Get the address of the first line.
             IntPtr ptr = bmpData.Scan0;
 
-            // Declare an array to hold the bytes of the bitmap.
-            int bytes = Math.Abs(bmpData.Stride) * bmp.Height;
-
             // Copy the RGB values back to the bitmap
             System.Runtime.InteropServices.Marshal.Copy(imageBytes, 0, ptr, imageBytes.Length);
 
@@ -148,7 +143,7 @@ namespace ConvolutionalCodes
             var scaledImage = new Bitmap(originalImage, new Size(200, (int)scaledHeight));
             originalImage.Dispose();
 
-            var imageBytes = GetImageBytes(scaledImage);
+            var imageBytes = GetColorBytes(scaledImage);
 
             string channelNoiseText = ChannelNoiseInput.Text;
             if (!double.TryParse(channelNoiseText, out var noise) || noise < 0 || noise > 1)
@@ -175,9 +170,9 @@ namespace ConvolutionalCodes
             var encodedImage = SetImageBytes(scaledImage, encodedImageBytes);
 
             encodingResultPanel.Controls.Clear();
-            encodingResultPanel.Controls.Add(CreatePanelWithLabel(scaledImage, "Original Image:"));
-            encodingResultPanel.Controls.Add(CreatePanelWithLabel(unencodedImage, "Unencoded Transmission:"));
-            encodingResultPanel.Controls.Add(CreatePanelWithLabel(encodedImage, "Encoded Transmission:"));
+            encodingResultPanel.Controls.Add(CreateImagePanel(scaledImage));
+            encodingResultPanel.Controls.Add(CreateImagePanel(unencodedImage));
+            encodingResultPanel.Controls.Add(CreateImagePanel(encodedImage));
                 
             EncodedErrorsText.Text = encodedErrors.ToString();
             EncodedErrorsText.ForeColor = encodedErrors > 0? Color.Crimson : Color.ForestGreen;
