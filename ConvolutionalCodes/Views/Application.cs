@@ -1,10 +1,10 @@
 ﻿using ConvolutionalCodes.Controllers;
 using ConvolutionalCodes.Encoders;
 using ConvolutionalCodes.Entities;
+using ConvolutionalCodes.Utilities;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using ConvolutionalCodes.Utilities;
 
 namespace ConvolutionalCodes
 {
@@ -13,6 +13,19 @@ namespace ConvolutionalCodes
         public Application()
         {
             InitializeComponent();
+        }
+
+        private void DisplayErrors(int unencodedErrors, int encodedErrors)
+        {
+            EncodedErrorsText.Text = encodedErrors.ToString();
+            EncodedErrorsText.ForeColor = encodedErrors > 0 ? Color.Crimson : Color.ForestGreen;
+
+            UnencodedErrorsText.Text = unencodedErrors.ToString();
+            UnencodedErrorsText.ForeColor = unencodedErrors > 0 ? Color.Crimson : Color.ForestGreen;
+
+            var percentage = MathHelper.CalculatePercentageWithPrecision(encodedErrors, unencodedErrors, 2);
+            ErrorsFixedText.Text = percentage.ToString() + '%';
+            ErrorsFixedText.ForeColor = percentage <= 50 ? Color.Crimson : Color.ForestGreen;
         }
 
         private async void TextSubmit_Click(object sender, EventArgs e)
@@ -68,7 +81,7 @@ namespace ConvolutionalCodes
             }
 
             var originalImage = new Bitmap(dialog.FileName);
-            var scaledImage = BitmapHelper.ScaleBitmap(originalImage, desiredWith: 200);
+            var scaledImage = BitmapHelper.ScaleBitmap(originalImage, desiredWidth: 200);
 
             var imageBytes = BitmapHelper.GetColorBytes(scaledImage);
 
@@ -94,16 +107,7 @@ namespace ConvolutionalCodes
             encodingResultPanel.Controls.Add(UIHelper.CreateImagePanel(unencodedImage));
             encodingResultPanel.Controls.Add(UIHelper.CreateImagePanel(encodedImage));
                 
-            EncodedErrorsText.Text = encodedErrors.ToString();
-            EncodedErrorsText.ForeColor = encodedErrors > 0? Color.Crimson : Color.ForestGreen;
-            UnencodedErrorsText.Text = unencodedErrors.ToString();
-            UnencodedErrorsText.ForeColor = unencodedErrors > 0 ? Color.Crimson : Color.ForestGreen;
-            var errorRatio = (encodedErrors == 0 || unencodedErrors == 0)? 
-                0 
-                : (double) encodedErrors / unencodedErrors;
-            var percentage = Math.Round((1 - errorRatio) * 100, 2);
-            ErrorsFixedText.Text = percentage.ToString() + '%';
-            ErrorsFixedText.ForeColor = percentage <= 50 ? Color.Crimson : Color.ForestGreen;
+            DisplayErrors(unencodedErrors, encodedErrors);
         }
     }
 }
