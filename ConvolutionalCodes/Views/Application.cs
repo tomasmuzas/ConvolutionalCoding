@@ -28,6 +28,32 @@ namespace ConvolutionalCodes
             ErrorsFixedText.ForeColor = percentage <= 50 ? Color.Crimson : Color.ForestGreen;
         }
 
+        private void DisplayTextResult(string original, StringResult unencoded, StringResult encoded)
+        {
+            encodingResultPanel.Controls.Clear();
+            
+            encodingResultPanel.Controls.Add(UIHelper.CreateLabelWithText("Initial Text: " + original));
+            encodingResultPanel.Controls.Add(UIHelper.CreateLabelWithText("Unencoded Text: " + unencoded.Result));
+            encodingResultPanel.Controls.Add(UIHelper.CreateLabelWithText("Encoded Text: " + encoded.Result));
+
+            DisplayErrors(unencoded.Errors, encoded.Errors);
+        }
+
+
+        private void DisplayImageResult(Bitmap original, ByteArrayResult unencoded, ByteArrayResult encoded)
+        {
+            encodingResultPanel.Controls.Clear();
+
+            var unencodedImage = BitmapHelper.SetImageBytes(original, unencoded.Result);
+            var encodedImage = BitmapHelper.SetImageBytes(original, encoded.Result);
+
+            encodingResultPanel.Controls.Add(UIHelper.CreateImagePanel(original));
+            encodingResultPanel.Controls.Add(UIHelper.CreateImagePanel(unencodedImage));
+            encodingResultPanel.Controls.Add(UIHelper.CreateImagePanel(encodedImage));
+
+            DisplayErrors(unencoded.Errors, encoded.Errors);
+        }
+
         private async void TextSubmit_Click(object sender, EventArgs e)
         {
             var initialText = TextInput.Text;
@@ -43,24 +69,14 @@ namespace ConvolutionalCodes
             var channel = new NoisyChannel(errorChance: noise);
 
             var unencodedResult = await MessageController.SendText(initialText, channel);
-            var unencodedText = unencodedResult.Result;
-            var unencodedErrors = unencodedResult.Errors;
-
 
             var encodedResult = await MessageController.SendText(
                 initialText,
                 channel,
                 new ConvolutionalEncoder(),
                 new ConvolutionalDecoder());
-            var encodedText = encodedResult.Result;
-            var encodedErrors = encodedResult.Errors;
 
-            encodingResultPanel.Controls.Clear();
-            encodingResultPanel.Controls.Add(UIHelper.CreateLabelWithText("Initial Text: " + initialText));
-            encodingResultPanel.Controls.Add(UIHelper.CreateLabelWithText("Unencoded Text: " + unencodedText));
-            encodingResultPanel.Controls.Add(UIHelper.CreateLabelWithText("Encoded Text: " + encodedText));
-
-            DisplayErrors(unencodedErrors, encodedErrors);
+            DisplayTextResult(initialText, unencodedResult, encodedResult);
         }
 
         [STAThread]
@@ -87,34 +103,24 @@ namespace ConvolutionalCodes
                 return;
             }
 
+            var channel = new NoisyChannel(noise);
+
             var originalImage = new Bitmap(dialog.FileName);
             var scaledImage = BitmapHelper.ScaleBitmap(originalImage, desiredWidth: 200);
 
             var imageBytes = BitmapHelper.GetColorBytes(scaledImage);
 
-            var channel = new NoisyChannel(noise);
+            
 
             var unencodedResult = await MessageController.SendBytes(imageBytes, channel);
-            var unencodedImageBytes = unencodedResult.Result;
-            var unencodedErrors = unencodedResult.Errors;
-            var unencodedImage = BitmapHelper.SetImageBytes(scaledImage, unencodedImageBytes);
-
 
             var encodedResult = await MessageController.SendBytes(
                 imageBytes,
                 channel,
                 new ConvolutionalEncoder(),
                 new ConvolutionalDecoder());
-            var encodedImageBytes = encodedResult.Result;
-            var encodedErrors = encodedResult.Errors;
-            var encodedImage = BitmapHelper.SetImageBytes(scaledImage, encodedImageBytes);
 
-            encodingResultPanel.Controls.Clear();
-            encodingResultPanel.Controls.Add(UIHelper.CreateImagePanel(scaledImage));
-            encodingResultPanel.Controls.Add(UIHelper.CreateImagePanel(unencodedImage));
-            encodingResultPanel.Controls.Add(UIHelper.CreateImagePanel(encodedImage));
-                
-            DisplayErrors(unencodedErrors, encodedErrors);
+            DisplayImageResult(scaledImage, unencodedResult, encodedResult);
         }
     }
 }
