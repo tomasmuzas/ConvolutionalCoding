@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\MessageController.cs" />
+    <Compile Include="Controllers\TransmissionResult.cs" />
     <Compile Include="Encoders\ConvolutionalDecoder.cs" />
     <Compile Include="Encoders\ConvolutionalEncoder.cs" />
     <Compile Include="Encoders\IDecoder.cs" />
@@ -64,8 +65,11 @@
     <Compile Include="Entities\ICommunicationChannel.cs" />
     <Compile Include="Entities\NoisyChannel.cs" />
     <Compile Include="Extensions\BitArrayExtensions.cs" />
+    <Compile Include="Utilities\BitmapHelper.cs" />
     <Compile Include="Utilities\IConverter.cs" />
+    <Compile Include="Utilities\MathHelper.cs" />
     <Compile Include="Utilities\TextConverter.cs" />
+    <Compile Include="Utilities\UIHelper.cs" />
     <Compile Include="Views\Application.cs">
       <SubType>Form</SubType>
     </Compile>

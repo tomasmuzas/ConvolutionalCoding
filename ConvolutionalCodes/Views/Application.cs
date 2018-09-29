@@ -1,10 +1,9 @@
 ﻿using ConvolutionalCodes.Controllers;
 using ConvolutionalCodes.Encoders;
 using ConvolutionalCodes.Entities;
+using ConvolutionalCodes.Utilities;
 using System;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
 using System.Windows.Forms;
 
 namespace ConvolutionalCodes
@@ -14,6 +13,19 @@ namespace ConvolutionalCodes
         public Application()
         {
             InitializeComponent();
+        }
+
+        private void DisplayErrors(int unencodedErrors, int encodedErrors)
+        {
+            EncodedErrorsText.Text = encodedErrors.ToString();
+            EncodedErrorsText.ForeColor = encodedErrors > 0 ? Color.Crimson : Color.ForestGreen;
+
+            UnencodedErrorsText.Text = unencodedErrors.ToString();
+            UnencodedErrorsText.ForeColor = unencodedErrors > 0 ? Color.Crimson : Color.ForestGreen;
+
+            var percentage = MathHelper.CalculatePercentageWithPrecision(encodedErrors, unencodedErrors, 2);
+            ErrorsFixedText.Text = percentage.ToString() + '%';
+            ErrorsFixedText.ForeColor = percentage <= 50 ? Color.Crimson : Color.ForestGreen;
         }
 
         private async void TextSubmit_Click(object sender, EventArgs e)
@@ -30,150 +42,79 @@ namespace ConvolutionalCodes
 
             var channel = new NoisyChannel(errorChance: noise);
 
-            var unencodedText = await MessageController.SendText(initialText, channel);
+            var unencodedResult = await MessageController.SendText(initialText, channel);
+            var unencodedText = unencodedResult.Result;
+            var unencodedErrors = unencodedResult.Errors;
 
-            var encodedText = await MessageController.SendText(
+
+            var encodedResult = await MessageController.SendText(
                 initialText,
                 channel,
                 new ConvolutionalEncoder(),
                 new ConvolutionalDecoder());
+            var encodedText = encodedResult.Result;
+            var encodedErrors = encodedResult.Errors;
 
             encodingResultPanel.Controls.Clear();
-            encodingResultPanel.Controls.Add(CreateLabelWithText("Initial Text: " + initialText));
-            encodingResultPanel.Controls.Add(CreateLabelWithText("Unencoded Text: " + unencodedText));
-            encodingResultPanel.Controls.Add(CreateLabelWithText("Encoded Text: " + encodedText));
-        }
+            encodingResultPanel.Controls.Add(UIHelper.CreateLabelWithText("Initial Text: " + initialText));
+            encodingResultPanel.Controls.Add(UIHelper.CreateLabelWithText("Unencoded Text: " + unencodedText));
+            encodingResultPanel.Controls.Add(UIHelper.CreateLabelWithText("Encoded Text: " + encodedText));
 
-        private Label CreateLabelWithText(string text)
-        {
-            var label = new Label
-            {
-                AutoSize = true,
-                Text = text
-            };
-            return label;
-        }
-
-        private FlowLayoutPanel CreatePanelWithLabel(Bitmap bmp, string text)
-        {
-            var layout = new FlowLayoutPanel
-            {
-                FlowDirection = FlowDirection.TopDown,
-                AutoSize = true,
-                MaximumSize = new Size(200, 0),
-                WrapContents = true
-            };
-            var pictureBox = new PictureBox
-            {
-                Image = bmp,
-                Width = bmp.Width,
-                Height = bmp.Height
-            };
-
-            //var label = CreateLabelWithText(text);
-            //layout.Controls.Add(label);
-            layout.Controls.Add(pictureBox);
-
-            return layout;
-        }
-
-        public byte[] GetImageBytes(Bitmap bmp)
-        {
-            // Lock the bitmap's bits.  
-            Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
-            BitmapData bmpData =
-                bmp.LockBits(rect, ImageLockMode.ReadWrite,
-                bmp.PixelFormat);
-
-            // Get the address of the first line.
-            IntPtr ptr = bmpData.Scan0;
-
-            // Declare an array to hold the bytes of the bitmap.
-            int bytes = Math.Abs(bmpData.Stride) * bmp.Height;
-            byte[] rgbValues = new byte[bytes];
-
-            // Copy the RGB values into the array.
-            System.Runtime.InteropServices.Marshal.Copy(ptr, rgbValues, 0, bytes);
-
-            bmp.UnlockBits(bmpData);
-            return rgbValues;
-        }
-
-        public Bitmap SetImageBytes(Bitmap original, byte[] imageBytes)
-        {
-            // Create bitmap.
-            Bitmap bmp = (Bitmap)original.Clone();
-
-            // Lock the bitmap's bits.  
-            Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
-            BitmapData bmpData =
-                bmp.LockBits(rect, ImageLockMode.ReadWrite,
-                bmp.PixelFormat);
-
-            // Get the address of the first line.
-            IntPtr ptr = bmpData.Scan0;
-
-            // Declare an array to hold the bytes of the bitmap.
-            int bytes = Math.Abs(bmpData.Stride) * bmp.Height;
-
-            // Copy the RGB values back to the bitmap
-            System.Runtime.InteropServices.Marshal.Copy(imageBytes, 0, ptr, imageBytes.Length);
-
-            // Unlock the bits.
-            bmp.UnlockBits(bmpData);
-
-            return bmp;
+            DisplayErrors(unencodedErrors, encodedErrors);
         }
 
         [STAThread]
         private async void uploadImageButton_Click(object sender, EventArgs e)
         {
             encodingResultPanel.Controls.Clear();
-            encodingResultPanel.Controls.Add(CreateLabelWithText("Loading images... Please wait."));
+            encodingResultPanel.Controls.Add(UIHelper.CreateLabelWithText("Loading images... Please wait."));
             var dialog = new OpenFileDialog
             {
                 ShowHelp = true,
                 Filter = "Image Files(*.jpeg;*.bmp;*.png;*.jpg)|*.jpeg;*.bmp;*.png;*.jpg"
             };
 
-            DialogResult Action = dialog.ShowDialog();
-            if (Action == DialogResult.OK)
+            var Response = dialog.ShowDialog();
+            if (Response != DialogResult.OK)
             {
-                
-                Bitmap originalImage = new Bitmap(dialog.FileName);
-                var scaledHeight = originalImage.Height / ((double)originalImage.Width / 200);
-
-                Bitmap scaledImage = new Bitmap(originalImage, new Size(200, (int)scaledHeight));
-                originalImage.Dispose();
-
-                var imageBytes = GetImageBytes(scaledImage);
-
-                string channelNoiseText = ChannelNoiseInput.Text;
-                if (!double.TryParse(channelNoiseText, out var noise) || noise < 0 || noise > 1)
-                {
-                    MessageBox.Show("Noise must be a number between 0 and 1.");
-                    return;
-                }
-
-                var channel = new NoisyChannel(noise);
-
-                var unencodedImageBytes = await MessageController.SendBytes(imageBytes, channel);
-                var unencodedImage = SetImageBytes(scaledImage, unencodedImageBytes);
-
-
-
-                var encodedImageBytes = await MessageController.SendBytes(
-                    imageBytes,
-                    channel,
-                    new ConvolutionalEncoder(),
-                    new ConvolutionalDecoder());
-                var encodedImage = SetImageBytes(scaledImage, encodedImageBytes);
-
-                encodingResultPanel.Controls.Clear();
-                encodingResultPanel.Controls.Add(CreatePanelWithLabel(scaledImage, "Original Image:"));
-                encodingResultPanel.Controls.Add(CreatePanelWithLabel(unencodedImage, "Unencoded Transmission:"));
-                encodingResultPanel.Controls.Add(CreatePanelWithLabel(encodedImage, "Encoded Transmission:"));
+                return;
             }
+
+            var channelNoiseText = ChannelNoiseInput.Text;
+            if (!double.TryParse(channelNoiseText, out var noise) || noise < 0 || noise > 1)
+            {
+                MessageBox.Show("Noise must be a number between 0 and 1.");
+                return;
+            }
+
+            var originalImage = new Bitmap(dialog.FileName);
+            var scaledImage = BitmapHelper.ScaleBitmap(originalImage, desiredWidth: 200);
+
+            var imageBytes = BitmapHelper.GetColorBytes(scaledImage);
+
+            var channel = new NoisyChannel(noise);
+
+            var unencodedResult = await MessageController.SendBytes(imageBytes, channel);
+            var unencodedImageBytes = unencodedResult.Result;
+            var unencodedErrors = unencodedResult.Errors;
+            var unencodedImage = BitmapHelper.SetImageBytes(scaledImage, unencodedImageBytes);
+
+
+            var encodedResult = await MessageController.SendBytes(
+                imageBytes,
+                channel,
+                new ConvolutionalEncoder(),
+                new ConvolutionalDecoder());
+            var encodedImageBytes = encodedResult.Result;
+            var encodedErrors = encodedResult.Errors;
+            var encodedImage = BitmapHelper.SetImageBytes(scaledImage, encodedImageBytes);
+
+            encodingResultPanel.Controls.Clear();
+            encodingResultPanel.Controls.Add(UIHelper.CreateImagePanel(scaledImage));
+            encodingResultPanel.Controls.Add(UIHelper.CreateImagePanel(unencodedImage));
+            encodingResultPanel.Controls.Add(UIHelper.CreateImagePanel(encodedImage));
+                
+            DisplayErrors(unencodedErrors, encodedErrors);
         }
     }
 }
