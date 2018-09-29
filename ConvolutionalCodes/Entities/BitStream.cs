@@ -46,6 +46,21 @@ namespace ConvolutionalCodes.Entities
             return stream1._data.SequenceEqual(stream2._data);
         }
 
+        public int Difference(IBitStream bitStream)
+        {
+            var errorCount = 0;
+            var bitsToCompare = bitStream.ReadAllBits();
+            for (int i = 0; i < _data.Length; i++)
+            {
+                if (_data[i] != bitsToCompare[i])
+                {
+                    errorCount++;
+                }
+            }
+
+            return errorCount;
+        }
+
         public static bool operator !=(BitStream stream1, BitStream stream2)
         {
             return !(stream1 == stream2);

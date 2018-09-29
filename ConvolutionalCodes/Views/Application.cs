@@ -178,6 +178,12 @@ namespace ConvolutionalCodes
             EncodedErrorsText.ForeColor = encodedErrors > 0? Color.Crimson : Color.ForestGreen;
             UnencodedErrorsText.Text = unencodedErrors.ToString();
             UnencodedErrorsText.ForeColor = unencodedErrors > 0 ? Color.Crimson : Color.ForestGreen;
+            var errorRatio = (encodedErrors == 0 || unencodedErrors == 0)? 
+                0 
+                : (double) encodedErrors / unencodedErrors;
+            var percentage = Math.Round((1 - errorRatio) * 100, 2);
+            ErrorsFixedText.Text = percentage.ToString() + '%';
+            ErrorsFixedText.ForeColor = percentage <= 50 ? Color.Crimson : Color.ForestGreen;
         }
     }
 }

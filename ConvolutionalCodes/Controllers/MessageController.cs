@@ -15,9 +15,11 @@ namespace ConvolutionalCodes.Controllers
             var bits = await Task.FromResult(converter.ToBitStream(text));
             var bitsAfterTransmission = await Task.FromResult(channel.Transmit(bits));
             var result = await Task.FromResult(converter.FromBitStream(bitsAfterTransmission));
+
+            
             return new StringResult
             {
-                Errors = 0,
+                Errors = bits.Difference(bitsAfterTransmission),
                 Result = result
             };
         }
@@ -31,7 +33,7 @@ namespace ConvolutionalCodes.Controllers
             var result = await Task.FromResult(converter.FromBitStream(decodedBits));
             return new StringResult
             {
-                Errors = 0,
+                Errors = bits.Difference(bitsAfterTransmission),
                 Result = result
             };
         }
@@ -43,7 +45,7 @@ namespace ConvolutionalCodes.Controllers
             var result = await Task.FromResult(bitsAfterTransmission.ToByteArray());
             return new ByteArrayResult
             {
-                Errors = 0,
+                Errors = bits.Difference(bitsAfterTransmission),
                 Result = result
             };
         }
@@ -57,7 +59,7 @@ namespace ConvolutionalCodes.Controllers
             var result = await Task.FromResult(decodedBits.ToByteArray());
             return new ByteArrayResult
             {
-                Errors = 0,
+                Errors = bits.Difference(decodedBits),
                 Result = result
             };
         }

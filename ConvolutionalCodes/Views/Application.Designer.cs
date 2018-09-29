@@ -45,6 +45,8 @@
             this.EncodedErrorsLabel = new System.Windows.Forms.Label();
             this.UnencodedErrorsText = new System.Windows.Forms.Label();
             this.EncodedErrorsText = new System.Windows.Forms.Label();
+            this.ErrorsFixedLabel = new System.Windows.Forms.Label();
+            this.ErrorsFixedText = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // enterTextLabel
@@ -217,11 +219,32 @@
             this.EncodedErrorsText.Size = new System.Drawing.Size(0, 17);
             this.EncodedErrorsText.TabIndex = 17;
             // 
+            // ErrorsFixedLabel
+            // 
+            this.ErrorsFixedLabel.AutoSize = true;
+            this.ErrorsFixedLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ErrorsFixedLabel.ForeColor = System.Drawing.SystemColors.Highlight;
+            this.ErrorsFixedLabel.Location = new System.Drawing.Point(559, 638);
+            this.ErrorsFixedLabel.Name = "ErrorsFixedLabel";
+            this.ErrorsFixedLabel.Size = new System.Drawing.Size(101, 17);
+            this.ErrorsFixedLabel.TabIndex = 18;
+            this.ErrorsFixedLabel.Text = "Errors Fixed:";
+            // 
+            // ErrorsFixedText
+            // 
+            this.ErrorsFixedText.AutoSize = true;
+            this.ErrorsFixedText.Location = new System.Drawing.Point(667, 638);
+            this.ErrorsFixedText.Name = "ErrorsFixedText";
+            this.ErrorsFixedText.Size = new System.Drawing.Size(0, 17);
+            this.ErrorsFixedText.TabIndex = 19;
+            // 
             // Application
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1182, 753);
+            this.Controls.Add(this.ErrorsFixedText);
+            this.Controls.Add(this.ErrorsFixedLabel);
             this.Controls.Add(this.EncodedErrorsText);
             this.Controls.Add(this.UnencodedErrorsText);
             this.Controls.Add(this.EncodedErrorsLabel);
@@ -267,6 +290,8 @@
         private System.Windows.Forms.Label EncodedErrorsLabel;
         private System.Windows.Forms.Label UnencodedErrorsText;
         private System.Windows.Forms.Label EncodedErrorsText;
+        private System.Windows.Forms.Label ErrorsFixedLabel;
+        private System.Windows.Forms.Label ErrorsFixedText;
     }
 }
 
