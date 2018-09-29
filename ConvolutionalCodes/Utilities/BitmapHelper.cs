@@ -51,11 +51,11 @@ namespace ConvolutionalCodes.Utilities
             return bmp;
         }
 
-        public static Bitmap ScaleBitmap(Bitmap originalImage, int desiredWith)
+        public static Bitmap ScaleBitmap(Bitmap originalImage, int desiredWidth)
         {
-            var scaledHeight = originalImage.Height / ((double)originalImage.Width / desiredWith);
+            var scaledHeight = originalImage.Height / ((double)originalImage.Width / desiredWidth);
 
-            var scaledImage = new Bitmap(originalImage, new Size(desiredWith, (int)scaledHeight));
+            var scaledImage = new Bitmap(originalImage, new Size(desiredWidth, (int)scaledHeight));
             originalImage.Dispose();
 
             return scaledImage;
