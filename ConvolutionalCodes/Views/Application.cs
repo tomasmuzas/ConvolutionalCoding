@@ -4,7 +4,6 @@ using ConvolutionalCodes.Entities;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using System.Windows.Forms;
 
 namespace ConvolutionalCodes
@@ -49,7 +48,8 @@ namespace ConvolutionalCodes
             var label = new Label
             {
                 AutoSize = true,
-                Text = text
+                Text = text,
+                MaximumSize = new Size(200, 0)
             };
             return label;
         }
@@ -136,44 +136,53 @@ namespace ConvolutionalCodes
                 Filter = "Image Files(*.jpeg;*.bmp;*.png;*.jpg)|*.jpeg;*.bmp;*.png;*.jpg"
             };
 
-            DialogResult Action = dialog.ShowDialog();
-            if (Action == DialogResult.OK)
+            var Response = dialog.ShowDialog();
+            if (Response != DialogResult.OK)
             {
-                
-                Bitmap originalImage = new Bitmap(dialog.FileName);
-                var scaledHeight = originalImage.Height / ((double)originalImage.Width / 200);
-
-                Bitmap scaledImage = new Bitmap(originalImage, new Size(200, (int)scaledHeight));
-                originalImage.Dispose();
-
-                var imageBytes = GetImageBytes(scaledImage);
-
-                string channelNoiseText = ChannelNoiseInput.Text;
-                if (!double.TryParse(channelNoiseText, out var noise) || noise < 0 || noise > 1)
-                {
-                    MessageBox.Show("Noise must be a number between 0 and 1.");
-                    return;
-                }
-
-                var channel = new NoisyChannel(noise);
-
-                var unencodedImageBytes = await MessageController.SendBytes(imageBytes, channel);
-                var unencodedImage = SetImageBytes(scaledImage, unencodedImageBytes);
-
-
-
-                var encodedImageBytes = await MessageController.SendBytes(
-                    imageBytes,
-                    channel,
-                    new ConvolutionalEncoder(),
-                    new ConvolutionalDecoder());
-                var encodedImage = SetImageBytes(scaledImage, encodedImageBytes);
-
-                encodingResultPanel.Controls.Clear();
-                encodingResultPanel.Controls.Add(CreatePanelWithLabel(scaledImage, "Original Image:"));
-                encodingResultPanel.Controls.Add(CreatePanelWithLabel(unencodedImage, "Unencoded Transmission:"));
-                encodingResultPanel.Controls.Add(CreatePanelWithLabel(encodedImage, "Encoded Transmission:"));
+                return;
             }
+
+            var originalImage = new Bitmap(dialog.FileName);
+            var scaledHeight = originalImage.Height / ((double)originalImage.Width / 200);
+
+            var scaledImage = new Bitmap(originalImage, new Size(200, (int)scaledHeight));
+            originalImage.Dispose();
+
+            var imageBytes = GetImageBytes(scaledImage);
+
+            string channelNoiseText = ChannelNoiseInput.Text;
+            if (!double.TryParse(channelNoiseText, out var noise) || noise < 0 || noise > 1)
+            {
+                MessageBox.Show("Noise must be a number between 0 and 1.");
+                return;
+            }
+
+            var channel = new NoisyChannel(noise);
+
+            var unencodedResult = await MessageController.SendBytes(imageBytes, channel);
+            var unencodedImageBytes = unencodedResult.Result;
+            var unencodedErrors = unencodedResult.Errors;
+            var unencodedImage = SetImageBytes(scaledImage, unencodedImageBytes);
+
+
+            var encodedResult = await MessageController.SendBytes(
+                imageBytes,
+                channel,
+                new ConvolutionalEncoder(),
+                new ConvolutionalDecoder());
+            var encodedImageBytes = encodedResult.Result;
+            var encodedErrors = encodedResult.Errors;
+            var encodedImage = SetImageBytes(scaledImage, encodedImageBytes);
+
+            encodingResultPanel.Controls.Clear();
+            encodingResultPanel.Controls.Add(CreatePanelWithLabel(scaledImage, "Original Image:"));
+            encodingResultPanel.Controls.Add(CreatePanelWithLabel(unencodedImage, "Unencoded Transmission:"));
+            encodingResultPanel.Controls.Add(CreatePanelWithLabel(encodedImage, "Encoded Transmission:"));
+                
+            EncodedErrorsText.Text = encodedErrors.ToString();
+            EncodedErrorsText.ForeColor = encodedErrors > 0? Color.Crimson : Color.ForestGreen;
+            UnencodedErrorsText.Text = unencodedErrors.ToString();
+            UnencodedErrorsText.ForeColor = unencodedErrors > 0 ? Color.Crimson : Color.ForestGreen;
         }
     }
 }
