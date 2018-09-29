@@ -42,18 +42,25 @@ namespace ConvolutionalCodes
 
             var channel = new NoisyChannel(errorChance: noise);
 
-            var unencodedText = await MessageController.SendText(initialText, channel);
+            var unencodedResult = await MessageController.SendText(initialText, channel);
+            var unencodedText = unencodedResult.Result;
+            var unencodedErrors = unencodedResult.Errors;
 
-            var encodedText = await MessageController.SendText(
+
+            var encodedResult = await MessageController.SendText(
                 initialText,
                 channel,
                 new ConvolutionalEncoder(),
                 new ConvolutionalDecoder());
+            var encodedText = encodedResult.Result;
+            var encodedErrors = encodedResult.Errors;
 
             encodingResultPanel.Controls.Clear();
             encodingResultPanel.Controls.Add(UIHelper.CreateLabelWithText("Initial Text: " + initialText));
             encodingResultPanel.Controls.Add(UIHelper.CreateLabelWithText("Unencoded Text: " + unencodedText));
             encodingResultPanel.Controls.Add(UIHelper.CreateLabelWithText("Encoded Text: " + encodedText));
+
+            DisplayErrors(unencodedErrors, encodedErrors);
         }
 
         [STAThread]
