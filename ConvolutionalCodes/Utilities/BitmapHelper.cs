@@ -6,6 +6,11 @@ namespace ConvolutionalCodes.Utilities
 {
     public static class BitmapHelper
     {
+        /// <summary>
+        /// Get Bitmap color values
+        /// </summary>
+        /// <param name="bmp">Image to get colors from</param>
+        /// <returns>Color information as bytes</returns>
         public static byte[] GetColorBytes(Bitmap bmp)
         {
             // Lock the bitmap's bits.  

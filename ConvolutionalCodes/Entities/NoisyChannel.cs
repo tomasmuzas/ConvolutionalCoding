@@ -18,6 +18,11 @@ namespace ConvolutionalCodes.Entities
             _errorChance = errorChance;
         }
 
+        /// <summary>
+        /// Transmits <see cref="Bit"/>s through the noisy channel and distorts it with a given error chance
+        /// </summary>
+        /// <param name="stream"><see cref="IBitStream"/> to distort</param>
+        /// <returns>Distorted <see cref="IBitStream"/></returns>
         public IBitStream Transmit(IBitStream stream)
         {
             var randomNumberGenerator = new Random();
