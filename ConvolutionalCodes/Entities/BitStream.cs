@@ -81,14 +81,14 @@ namespace ConvolutionalCodes.Entities
             for (int i = 0; i < _data.Length; i += 8)
             {
                 byte currentByte = 0;
-                // Set every bit of a byte starting from right to left
+                // Set every bit of a byte starting from left to right
                 // j denotes a bit position in a byte where 7 - rightmost bit, 0 - leftmost bit
-                for (int j = 7; j >= 0; j--)
+                for (int j = 0; j <= 7; j++)
                 {
                     var bit = _data[i + j];
 
                     // Shift bit by j positions creating only one bit set in j-th position
-                    var positionalBit = (int)bit << j;
+                    var positionalBit = (int)bit << (7 - j);
 
                     // Set bit to a certain position in a byte
                     currentByte = (byte)(currentByte | positionalBit);
