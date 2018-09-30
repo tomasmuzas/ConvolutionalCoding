@@ -10,6 +10,12 @@ namespace ConvolutionalCodes.Controllers
     {
         private static readonly IConverter<string> converter = new TextConverter(Encoding.UTF8);
 
+        /// <summary>
+        /// Sends text through noisy channel
+        /// </summary>
+        /// <param name="text">A text to send</param>
+        /// <param name="channel">Noisy channel</param>
+        /// <returns>Resulting text together with error information</returns>
         public static async Task<StringResult> SendText(string text, ICommunicationChannel channel)
         {
             var bits = await Task.FromResult(converter.ToBitStream(text));
@@ -24,6 +30,14 @@ namespace ConvolutionalCodes.Controllers
             };
         }
 
+        /// <summary>
+        /// Send text with encoding through noisy channel
+        /// </summary>
+        /// <param name="text">Text to send</param>
+        /// <param name="channel">Noisy channel</param>
+        /// <param name="encoder">Encoder to encode bits</param>
+        /// <param name="decoder">Corresponding decoder to decode bits</param>
+        /// <returns>Resulting text after decoding together with error information</returns>
         public static async Task<StringResult> SendText(string text, ICommunicationChannel channel, IEncoder encoder, IDecoder decoder)
         {
             var bits = converter.ToBitStream(text);
@@ -38,6 +52,13 @@ namespace ConvolutionalCodes.Controllers
             };
         }
 
+
+        /// <summary>
+        /// Send bytes through noisy channel
+        /// </summary>
+        /// <param name="bytes">Text to send</param>
+        /// <param name="channel">Noisy channel</param>
+        /// <returns>Resulting bytes together with error information</returns>
         public static async Task<ByteArrayResult> SendBytes(byte[] bytes, ICommunicationChannel channel)
         {
             var bits = new BitStream(bytes);
@@ -50,6 +71,14 @@ namespace ConvolutionalCodes.Controllers
             };
         }
 
+        /// <summary>
+        /// Send bytes with encoding through noisy channel
+        /// </summary>
+        /// <param name="bytes">Bytes to send</param>
+        /// <param name="channel">Noisy channel</param>
+        /// <param name="encoder">Encoder to encode bits</param>
+        /// <param name="decoder">Corresponding decoder to decode bits</param>
+        /// <returns>Resulting bytes after decoding together with error information</returns>
         public static async Task<ByteArrayResult> SendBytes(byte[] bytes, ICommunicationChannel channel, IEncoder encoder, IDecoder decoder)
         {
             var bits = new BitStream(bytes);

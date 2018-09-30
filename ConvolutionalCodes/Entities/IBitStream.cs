@@ -6,8 +6,6 @@ namespace ConvolutionalCodes.Entities
     {
         int Length { get; }
 
-        IEnumerable<Bit> ReadBits(int length);
-
         Bit[] ReadAllBits();
 
         byte[] ToByteArray();

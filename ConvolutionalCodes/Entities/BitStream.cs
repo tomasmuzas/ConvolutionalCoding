@@ -1,22 +1,16 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 
 namespace ConvolutionalCodes.Entities
 {
     public class BitStream : IBitStream
     {
-        private Bit[] _data { get; set; }
-
-        private int _position { get; set; }
+        private Bit[] _data { get; }
 
         public int Length => _data.Length;
 
         public BitStream(Bit[] bits)
         {
             _data = bits;
-            _position = 0;
         }
 
         public BitStream(byte[] bytes)
@@ -32,13 +26,11 @@ namespace ConvolutionalCodes.Entities
                     _data[position++] = bit; 
                 }
             }
-            _position = 0;
         }
 
         public BitStream(IBitStream stream)
         {
             _data = stream.ReadAllBits();
-            _position = 0;
         }
 
         public static bool operator ==(BitStream stream1, BitStream stream2)
@@ -46,6 +38,11 @@ namespace ConvolutionalCodes.Entities
             return stream1._data.SequenceEqual(stream2._data);
         }
 
+        /// <summary>
+        /// Counts different bits between two streams
+        /// </summary>
+        /// <param name="bitStream"><see cref="BitStream"/> to compare to</param>
+        /// <returns>Number of different bits</returns>
         public int Difference(IBitStream bitStream)
         {
             var errorCount = 0;
@@ -66,23 +63,15 @@ namespace ConvolutionalCodes.Entities
             return !(stream1 == stream2);
         }
 
-        /// <summary>
-        /// Read specified number of bits
-        /// </summary>
-        /// <param name="length">Number of bits to read</param>
-        /// <returns><see cref="IEnumerable{Bit}"/> of specified length</returns>
-        public IEnumerable<Bit> ReadBits(int length)
-        {
-            var returnData = _data.Skip(_position).Take(length);
-            _position += length;
-            return returnData;
-        }
-
         public Bit[] ReadAllBits()
         {
             return _data;
         }
 
+        /// <summary>
+        /// Converts <see cref="BitStream"/> to byte array
+        /// </summary>
+        /// <returns>Bits converted to bytes</returns>
         public byte[] ToByteArray()
         {
             var bytes = new byte[_data.Length / 8];
@@ -92,11 +81,16 @@ namespace ConvolutionalCodes.Entities
             for (int i = 0; i < _data.Length; i += 8)
             {
                 byte currentByte = 0;
-                for (int j = 0; j <= 7; j++)
+                // Set every bit of a byte starting from right to left
+                // j denotes a bit position in a byte where 7 - rightmost bit, 0 - leftmost bit
+                for (int j = 7; j >= 0; j--)
                 {
                     var bit = _data[i + j];
 
-                    var positionalBit = (int)bit << (7 - j);
+                    // Shift bit by j positions creating only one bit set in j-th position
+                    var positionalBit = (int)bit << j;
+
+                    // Set bit to a certain position in a byte
                     currentByte = (byte)(currentByte | positionalBit);
                 }
 
