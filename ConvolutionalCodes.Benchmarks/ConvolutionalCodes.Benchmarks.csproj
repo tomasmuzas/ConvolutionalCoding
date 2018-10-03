@@ -4,16 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F15BDF42-8607-4703-9212-8C893F7F15A0}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
-    <RootNamespace>ConvolutionalCodes</RootNamespace>
-    <AssemblyName>ConvolutionalCodes</AssemblyName>
+    <ProjectGuid>{2BEE1CBE-AE47-49E6-9370-3C3CA64784AA}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>ConvolutionalCodes.Benchmarks</RootNamespace>
+    <AssemblyName>ConvolutionalCodes.Benchmarks</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -51,34 +49,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controllers\MessageController.cs" />
-    <Compile Include="Controllers\TransmissionResult.cs" />
-    <Compile Include="Encoders\ConvolutionalDecoder.cs" />
-    <Compile Include="Encoders\ConvolutionalEncoder.cs" />
-    <Compile Include="Encoders\IDecoder.cs" />
-    <Compile Include="Encoders\IEncoder.cs" />
-    <Compile Include="Encoders\IRegister.cs" />
-    <Compile Include="Encoders\ShiftingRegister.cs" />
-    <Compile Include="Entities\Bit.cs" />
-    <Compile Include="Entities\BitStream.cs" />
-    <Compile Include="Entities\IBitStream.cs" />
-    <Compile Include="Entities\ICommunicationChannel.cs" />
-    <Compile Include="Entities\NoisyChannel.cs" />
-    <Compile Include="Extensions\BitArrayExtensions.cs" />
-    <Compile Include="Utilities\BitmapHelper.cs" />
-    <Compile Include="Utilities\IConverter.cs" />
-    <Compile Include="Utilities\MathHelper.cs" />
-    <Compile Include="Utilities\TextConverter.cs" />
-    <Compile Include="Utilities\UIHelper.cs" />
-    <Compile Include="Utilities\VectorConverter.cs" />
-    <Compile Include="Views\Application.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Views\Application.Designer.cs">
-      <DependentUpon>Application.cs</DependentUpon>
-    </Compile>
+    <Compile Include="ErrorCorrectionBenchmark.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RunTimeBenchmark.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -88,9 +62,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Views\Application.resx">
-      <DependentUpon>Application.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -102,8 +73,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <ProjectReference Include="..\ConvolutionalCodes\ConvolutionalCodes.csproj">
+      <Project>{F15BDF42-8607-4703-9212-8C893F7F15A0}</Project>
+      <Name>ConvolutionalCodes</Name>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

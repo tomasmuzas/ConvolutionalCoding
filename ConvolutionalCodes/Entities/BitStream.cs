@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace ConvolutionalCodes.Entities
 {
@@ -56,6 +57,27 @@ namespace ConvolutionalCodes.Entities
             }
 
             return errorCount;
+        }
+
+        /// <summary>
+        /// Counts different bits between two streams
+        /// </summary>
+        /// <param name="bitStream"><see cref="BitStream"/> to compare to</param>
+        /// <returns>All the positions that are different</returns>
+        public List<int> DifferenceWithPositions(IBitStream bitStream)
+        {
+            var errors = new List<int>();
+            var bitsToCompare = bitStream.ReadAllBits();
+            for (int i = 0; i < _data.Length; i++)
+            {
+                if (_data[i] != bitsToCompare[i])
+                {
+                    // Add position as human readable number
+                    errors.Add(i + 1);
+                }
+            }
+
+            return errors;
         }
 
         public static bool operator !=(BitStream stream1, BitStream stream2)

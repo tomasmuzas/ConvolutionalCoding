@@ -16,8 +16,8 @@ namespace ConvolutionalCodes.Utilities
         public string FromBitStream(IBitStream stream)
         {
             var bytes = stream.ToByteArray();
-            // Replace non printable characters
-            return Regex.Replace(_encoding.GetString(bytes), @"\p{C}+", "?"); 
+            // Replace non printable characters except newline
+            return Regex.Replace(_encoding.GetString(bytes), @"[\p{C}-[\r\n]]+", "?"); 
         }
 
         public IBitStream ToBitStream(string value)

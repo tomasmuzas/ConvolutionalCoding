@@ -11,5 +11,7 @@ namespace ConvolutionalCodes.Entities
         byte[] ToByteArray();
 
         int Difference(IBitStream bitStream);
+
+        List<int> DifferenceWithPositions(IBitStream bitStream);
     }
 }

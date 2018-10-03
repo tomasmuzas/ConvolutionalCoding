@@ -5,7 +5,9 @@ VisualStudioVersion = 15.0.28010.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConvolutionalCodes", "ConvolutionalCodes\ConvolutionalCodes.csproj", "{F15BDF42-8607-4703-9212-8C893F7F15A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConvolutionalCodes.Tests", "ConvolutionalCodes.Tests\ConvolutionalCodes.Tests.csproj", "{3B750965-73EA-4665-8F5C-095E83A964EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConvolutionalCodes.Tests", "ConvolutionalCodes.Tests\ConvolutionalCodes.Tests.csproj", "{3B750965-73EA-4665-8F5C-095E83A964EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConvolutionalCodes.Benchmarks", "ConvolutionalCodes.Benchmarks\ConvolutionalCodes.Benchmarks.csproj", "{2BEE1CBE-AE47-49E6-9370-3C3CA64784AA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{3B750965-73EA-4665-8F5C-095E83A964EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B750965-73EA-4665-8F5C-095E83A964EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B750965-73EA-4665-8F5C-095E83A964EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BEE1CBE-AE47-49E6-9370-3C3CA64784AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BEE1CBE-AE47-49E6-9370-3C3CA64784AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BEE1CBE-AE47-49E6-9370-3C3CA64784AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BEE1CBE-AE47-49E6-9370-3C3CA64784AA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
