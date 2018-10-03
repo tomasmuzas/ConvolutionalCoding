@@ -47,12 +47,16 @@
             this.EncodedErrorsText = new System.Windows.Forms.Label();
             this.ErrorsFixedLabel = new System.Windows.Forms.Label();
             this.ErrorsFixedText = new System.Windows.Forms.Label();
+            this.EncodeVectorLabel = new System.Windows.Forms.Label();
+            this.VectorSubmit = new System.Windows.Forms.Button();
+            this.VectorInput = new System.Windows.Forms.TextBox();
+            this.EnterVectorLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // enterTextLabel
             // 
             this.enterTextLabel.AutoSize = true;
-            this.enterTextLabel.Location = new System.Drawing.Point(12, 113);
+            this.enterTextLabel.Location = new System.Drawing.Point(12, 278);
             this.enterTextLabel.Name = "enterTextLabel";
             this.enterTextLabel.Size = new System.Drawing.Size(139, 17);
             this.enterTextLabel.TabIndex = 0;
@@ -60,15 +64,16 @@
             // 
             // TextInput
             // 
-            this.TextInput.Location = new System.Drawing.Point(15, 134);
+            this.TextInput.Location = new System.Drawing.Point(15, 299);
+            this.TextInput.Multiline = true;
             this.TextInput.Name = "TextInput";
-            this.TextInput.Size = new System.Drawing.Size(197, 22);
+            this.TextInput.Size = new System.Drawing.Size(197, 139);
             this.TextInput.TabIndex = 1;
             // 
             // selectImageLabel
             // 
             this.selectImageLabel.AutoSize = true;
-            this.selectImageLabel.Location = new System.Drawing.Point(12, 263);
+            this.selectImageLabel.Location = new System.Drawing.Point(12, 543);
             this.selectImageLabel.Name = "selectImageLabel";
             this.selectImageLabel.Size = new System.Drawing.Size(160, 17);
             this.selectImageLabel.TabIndex = 2;
@@ -77,7 +82,7 @@
             // uploadImageButton
             // 
             this.uploadImageButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.uploadImageButton.Location = new System.Drawing.Point(15, 283);
+            this.uploadImageButton.Location = new System.Drawing.Point(15, 563);
             this.uploadImageButton.Name = "uploadImageButton";
             this.uploadImageButton.Size = new System.Drawing.Size(123, 35);
             this.uploadImageButton.TabIndex = 3;
@@ -99,7 +104,7 @@
             // TextSubmit
             // 
             this.TextSubmit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.TextSubmit.Location = new System.Drawing.Point(15, 163);
+            this.TextSubmit.Location = new System.Drawing.Point(15, 444);
             this.TextSubmit.Name = "TextSubmit";
             this.TextSubmit.Size = new System.Drawing.Size(75, 35);
             this.TextSubmit.TabIndex = 5;
@@ -142,7 +147,7 @@
             this.label1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.label1.Location = new System.Drawing.Point(12, 96);
+            this.label1.Location = new System.Drawing.Point(12, 261);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(98, 17);
             this.label1.TabIndex = 9;
@@ -175,7 +180,7 @@
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.label2.Location = new System.Drawing.Point(12, 246);
+            this.label2.Location = new System.Drawing.Point(12, 526);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(110, 17);
             this.label2.TabIndex = 13;
@@ -238,11 +243,54 @@
             this.ErrorsFixedText.Size = new System.Drawing.Size(0, 17);
             this.ErrorsFixedText.TabIndex = 19;
             // 
+            // EncodeVectorLabel
+            // 
+            this.EncodeVectorLabel.AutoSize = true;
+            this.EncodeVectorLabel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.EncodeVectorLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.EncodeVectorLabel.ForeColor = System.Drawing.SystemColors.Highlight;
+            this.EncodeVectorLabel.Location = new System.Drawing.Point(12, 117);
+            this.EncodeVectorLabel.Name = "EncodeVectorLabel";
+            this.EncodeVectorLabel.Size = new System.Drawing.Size(114, 17);
+            this.EncodeVectorLabel.TabIndex = 23;
+            this.EncodeVectorLabel.Text = "Encode Vector";
+            // 
+            // VectorSubmit
+            // 
+            this.VectorSubmit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.VectorSubmit.Location = new System.Drawing.Point(15, 184);
+            this.VectorSubmit.Name = "VectorSubmit";
+            this.VectorSubmit.Size = new System.Drawing.Size(75, 35);
+            this.VectorSubmit.TabIndex = 22;
+            this.VectorSubmit.Text = "Submit";
+            this.VectorSubmit.UseVisualStyleBackColor = true;
+            this.VectorSubmit.Click += new System.EventHandler(this.VectorSubmit_Click);
+            // 
+            // VectorInput
+            // 
+            this.VectorInput.Location = new System.Drawing.Point(15, 155);
+            this.VectorInput.Name = "VectorInput";
+            this.VectorInput.Size = new System.Drawing.Size(197, 22);
+            this.VectorInput.TabIndex = 21;
+            // 
+            // EnterVectorLabel
+            // 
+            this.EnterVectorLabel.AutoSize = true;
+            this.EnterVectorLabel.Location = new System.Drawing.Point(12, 134);
+            this.EnterVectorLabel.Name = "EnterVectorLabel";
+            this.EnterVectorLabel.Size = new System.Drawing.Size(156, 17);
+            this.EnterVectorLabel.TabIndex = 20;
+            this.EnterVectorLabel.Text = "Enter vector to encode:";
+            // 
             // Application
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1182, 753);
+            this.Controls.Add(this.EncodeVectorLabel);
+            this.Controls.Add(this.VectorSubmit);
+            this.Controls.Add(this.VectorInput);
+            this.Controls.Add(this.EnterVectorLabel);
             this.Controls.Add(this.ErrorsFixedText);
             this.Controls.Add(this.ErrorsFixedLabel);
             this.Controls.Add(this.EncodedErrorsText);
@@ -292,6 +340,10 @@
         private System.Windows.Forms.Label EncodedErrorsText;
         private System.Windows.Forms.Label ErrorsFixedLabel;
         private System.Windows.Forms.Label ErrorsFixedText;
+        private System.Windows.Forms.Label EncodeVectorLabel;
+        private System.Windows.Forms.Button VectorSubmit;
+        private System.Windows.Forms.TextBox VectorInput;
+        private System.Windows.Forms.Label EnterVectorLabel;
     }
 }
 

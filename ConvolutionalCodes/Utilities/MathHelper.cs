@@ -8,7 +8,7 @@ namespace ConvolutionalCodes.Utilities
         {
             if (max == 0)
             {
-                return 0;
+                return 100;
             }
 
             var percentage = 1 - (double)min / max;

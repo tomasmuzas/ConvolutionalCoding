@@ -4,6 +4,8 @@ using ConvolutionalCodes.Entities;
 using ConvolutionalCodes.Utilities;
 using System;
 using System.Drawing;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ConvolutionalCodes
@@ -34,6 +36,62 @@ namespace ConvolutionalCodes
             var percentage = MathHelper.CalculatePercentageWithPrecision(encodedErrors, unencodedErrors, 2);
             ErrorsFixedText.Text = percentage.ToString() + '%';
             ErrorsFixedText.ForeColor = percentage <= 50 ? Color.Crimson : Color.ForestGreen;
+        }
+
+        /// <summary>
+        /// Displays encoded vector, which can be edited
+        /// </summary>
+        /// <param name="vectorInfo">Encoded vector</param>
+        private void DisplayEncodedVector(StringResultWithErrorPositions vectorInfo)
+        {
+            encodingResultPanel.Controls.Clear();
+
+            var layout = new FlowLayoutPanel
+            {
+                FlowDirection = FlowDirection.TopDown,
+                AutoSize = true,
+                MaximumSize = new Size(200, 0),
+                WrapContents = true
+            };
+
+            layout.Controls.Add(UIHelper.CreateLabelWithText("Encoded Vector:"));
+
+            var textBox = UIHelper.CreateTextBox(vectorInfo.Result);
+            layout.Controls.Add(textBox);
+            var button = UIHelper.CreateButton("Decode", async () =>
+            {
+                await DecodeAndDisplayVector(textBox.Text);
+            });
+            layout.Controls.Add(button);
+            layout.Controls.Add(UIHelper.CreateLabelWithText($"Errors: {vectorInfo.Errors}, Positions: {string.Join(",", vectorInfo.ErrorPositions)}"));
+            encodingResultPanel.Controls.Add(layout);
+        }
+
+        /// <summary>
+        /// Displays a vector
+        /// </summary>
+        /// <param name="vector">Vector to display</param>
+        private void DisplayDecodedVector(string vector)
+        {
+            encodingResultPanel.Controls.Add(UIHelper.CreateLabelWithText("Decoded Vector: " + vector));
+        }
+
+        /// <summary>
+        /// Decode given vector
+        /// </summary>
+        /// <param name="encodedVectorText"></param>
+        private async Task DecodeAndDisplayVector(string encodedVectorText)
+        {
+            try
+            {
+                var decodedResult = await MessageController.DecodeVector(encodedVectorText, new ConvolutionalDecoder());
+                DisplayDecodedVector(decodedResult.Result);
+            }
+            catch (ArgumentException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
         }
 
         /// <summary>
@@ -71,6 +129,25 @@ namespace ConvolutionalCodes
             encodingResultPanel.Controls.Add(UIHelper.CreateImagePanel(imageWithEncoding));
 
             DisplayErrors(resultWithoutEncoding.Errors, resultWithEncoding.Errors);
+        }
+
+        private async void VectorSubmit_Click(object sender, EventArgs e)
+        {
+            var vectorText = VectorInput.Text;
+
+            string channelNoiseText = ChannelNoiseInput.Text;
+
+            if (!double.TryParse(channelNoiseText.Replace(',', '.'), out var noise) || noise < 0 || noise > 1)
+            {
+                MessageBox.Show("Noise must be a number between 0 and 1.");
+                return;
+            }
+
+            var channel = new NoisyChannel(errorChance: noise);
+
+            var encodedResult = await MessageController.EncodeAndSendVector(vectorText, new ConvolutionalEncoder(), channel);
+
+            DisplayEncodedVector(encodedResult);
         }
 
         private async void TextSubmit_Click(object sender, EventArgs e)

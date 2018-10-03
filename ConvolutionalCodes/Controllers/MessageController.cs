@@ -8,7 +8,56 @@ namespace ConvolutionalCodes.Controllers
 {
     public class MessageController
     {
-        private static readonly IConverter<string> converter = new TextConverter(Encoding.UTF8);
+        private static readonly IConverter<string> textConverter = new TextConverter(Encoding.UTF8);
+        private static readonly IConverter<string> vectorConverter = new VectorConverter();
+
+        /// <summary>
+        /// Encodes a given vector
+        /// </summary>
+        /// <param name="vector">A vector to encode</param>
+        /// <param name="encoder">Encoder to encode vector with</param>
+        /// <returns>Resulting text</returns>
+        public static async Task<StringResultWithErrorPositions> EncodeAndSendVector(string vector, IEncoder encoder, ICommunicationChannel channel)
+        {
+            var bits = vectorConverter.ToBitStream(vector);
+
+            var encodedBits = await Task.FromResult(encoder.Encode(bits));
+
+            var bitsAfterTransmission = await Task.FromResult(channel.Transmit(encodedBits));
+
+            var errors = encodedBits.DifferenceWithPositions(bitsAfterTransmission);
+
+            var encodedVector = vectorConverter.FromBitStream(encodedBits);
+
+            return new StringResultWithErrorPositions
+            {
+                ErrorPositions = errors,
+                Errors = errors.Count,
+                Result = encodedVector
+            };
+        }
+
+        /// <summary>
+        /// Decodes a given encoded vector
+        /// </summary>
+        /// <param name="encodedVector">Encoded vector to decode</param>
+        /// <param name="decoder">Decoder to decode a vector</param>
+        /// <returns>A <see cref="StringResult"/> that contains a decoded vector as Result property</returns>
+        public static async Task<StringResult> DecodeVector(string encodedVector, ConvolutionalDecoder decoder)
+        {
+            var bitStream = vectorConverter.ToBitStream(encodedVector);
+            
+            var result = await Task.FromResult(decoder.Decode(bitStream));
+
+            var decodedVector = vectorConverter.FromBitStream(result);
+            
+            return new StringResult
+            {
+                Errors = 0,
+                Result = decodedVector
+            };
+        }
+
 
         /// <summary>
         /// Sends text through noisy channel
@@ -18,9 +67,9 @@ namespace ConvolutionalCodes.Controllers
         /// <returns>Resulting text together with error information</returns>
         public static async Task<StringResult> SendText(string text, ICommunicationChannel channel)
         {
-            var bits = await Task.FromResult(converter.ToBitStream(text));
+            var bits = await Task.FromResult(textConverter.ToBitStream(text));
             var bitsAfterTransmission = await Task.FromResult(channel.Transmit(bits));
-            var result = await Task.FromResult(converter.FromBitStream(bitsAfterTransmission));
+            var result = await Task.FromResult(textConverter.FromBitStream(bitsAfterTransmission));
 
             
             return new StringResult
@@ -40,11 +89,12 @@ namespace ConvolutionalCodes.Controllers
         /// <returns>Resulting text after decoding together with error information</returns>
         public static async Task<StringResult> SendText(string text, ICommunicationChannel channel, IEncoder encoder, IDecoder decoder)
         {
-            var bits = converter.ToBitStream(text);
+            var bits = textConverter.ToBitStream(text);
             var encodedBits = await Task.FromResult(encoder.Encode(bits));
             var bitsAfterTransmission = await Task.FromResult(channel.Transmit(encodedBits));
             var decodedBits = await Task.FromResult(decoder.Decode(bitsAfterTransmission));
-            var result = await Task.FromResult(converter.FromBitStream(decodedBits));
+            var result = await Task.FromResult(textConverter.FromBitStream(decodedBits));
+
             return new StringResult
             {
                 Errors = bits.Difference(decodedBits),
@@ -92,7 +142,5 @@ namespace ConvolutionalCodes.Controllers
                 Result = result
             };
         }
-
-
     }
 }

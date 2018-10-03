@@ -70,6 +70,7 @@
     <Compile Include="Utilities\MathHelper.cs" />
     <Compile Include="Utilities\TextConverter.cs" />
     <Compile Include="Utilities\UIHelper.cs" />
+    <Compile Include="Utilities\VectorConverter.cs" />
     <Compile Include="Views\Application.cs">
       <SubType>Form</SubType>
     </Compile>
